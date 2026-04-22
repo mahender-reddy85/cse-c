@@ -1,0 +1,147 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null && (request.auth.token.email_verified == true || request.auth.token.firebase.sign_in_provider == 'anonymous');
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isUserAuthenticated() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return isUserAuthenticated() && getUserData().role == 'admin';
+    }
+
+    function isOwner(email) {
+      return isSignedIn() && (
+        request.auth.token.email == email || 
+        (request.auth.token.firebase.sign_in_provider == 'anonymous' && email == 'guest@examhub.local')
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- System / Connection Test ---
+    match /system/connection_test {
+      allow get: if true;
+    }
+
+    // --- Users ---
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      // Allow users to create their own initial profile
+      allow create: if isSignedIn() && request.auth.uid == userId && (
+        (request.resource.data.role == 'student' && !('isGuest' in request.resource.data)) ||
+        (request.resource.data.role == 'student' && request.resource.data.isGuest == true)
+      );
+      // Only admins can update other roles or general writes
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        (request.auth.uid == userId && request.resource.data.role == resource.data.role)
+      );
+      allow delete: if isAdmin();
+    }
+
+    // --- Documents ---
+    match /documents/{docId} {
+      function isValidDocument(data) {
+        return data.title is string && data.title.size() <= 200 &&
+               data.exam in ['Mid', 'Final'] &&
+               data.subject is string && data.subject.size() <= 100 &&
+               data.unit is string && data.unit.size() <= 100 &&
+               data.tags is list && data.tags.size() <= 10 &&
+               data.fileUrl is string && data.fileUrl.size() <= 1024 &&
+               data.fileType in ['pdf', 'image'] &&
+               data.uploadedBy is string &&
+               data.createdAt is timestamp &&
+               data.views is number &&
+               data.isImportant is bool;
+      }
+
+      allow read: if isUserAuthenticated();
+      allow create: if isAdmin() && isValidId(docId) && isValidDocument(request.resource.data) &&
+                      isOwner(request.resource.data.uploadedBy) &&
+                      request.resource.data.createdAt == request.time &&
+                      request.resource.data.views == 0;
+      
+      allow update: if isUserAuthenticated() && (
+        (isAdmin() && isValidDocument(request.resource.data) && request.resource.data.uploadedBy == resource.data.uploadedBy && request.resource.data.createdAt == resource.data.createdAt) ||
+        // Students can only increment views
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) &&
+         request.resource.data.views == resource.data.views + 1)
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    // --- Requests ---
+    match /requests/{requestId} {
+      function isValidRequest(data) {
+        return data.title is string && data.title.size() <= 200 &&
+               data.subject is string && data.subject.size() <= 100 &&
+               data.unit is string && data.unit.size() <= 100 &&
+               data.requestedBy is string &&
+               data.status in ['pending', 'fulfilled'] &&
+               data.createdAt is timestamp;
+      }
+
+      allow read: if isUserAuthenticated();
+      allow create: if isUserAuthenticated() && isValidId(requestId) && isValidRequest(request.resource.data) &&
+                      isOwner(request.resource.data.requestedBy) &&
+                      request.resource.data.status == 'pending' &&
+                      request.resource.data.createdAt == request.time;
+      
+      allow update: if isUserAuthenticated() && (
+        (isAdmin() && isValidRequest(request.resource.data) && 
+         request.resource.data.requestedBy == resource.data.requestedBy &&
+         request.resource.data.createdAt == resource.data.createdAt) ||
+         // Students can't update requests once submitted, typically
+         false
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    // --- Submissions ---
+    match /submissions/{submissionId} {
+      function isValidSubmission(data) {
+        return data.title is string && data.title.size() <= 200 &&
+               data.subject is string && data.subject.size() <= 100 &&
+               data.unit is string && data.unit.size() <= 100 &&
+               data.fileUrl is string && data.fileUrl.size() <= 1024 &&
+               data.submittedBy is string &&
+               data.status in ['pending', 'approved', 'rejected'] &&
+               data.createdAt is timestamp;
+      }
+
+      allow read: if isUserAuthenticated() && (isAdmin() || isOwner(resource.data.submittedBy));
+      allow create: if isUserAuthenticated() && isValidId(submissionId) && isValidSubmission(request.resource.data) &&
+                      isOwner(request.resource.data.submittedBy) &&
+                      request.resource.data.status == 'pending' &&
+                      request.resource.data.createdAt == request.time;
+      
+      allow update: if isUserAuthenticated() && (
+        (isAdmin() && isValidSubmission(request.resource.data) && 
+         request.resource.data.submittedBy == resource.data.submittedBy &&
+         request.resource.data.createdAt == resource.data.createdAt)
+      );
+      
+      allow delete: if isAdmin();
+    }
+  }
+}
