@@ -1,9 +1,9 @@
 {
-  "projectId": "cse-c-ab22a",
-  "appId": "1:708396073887:web:47cce66bc0e870bf3133aa",
   "apiKey": "AIzaSyCZIzCyyVbxQMBUihOwcKjCvJOA3xzCmVw",
   "authDomain": "cse-c-ab22a.firebaseapp.com",
+  "projectId": "cse-c-ab22a",
   "storageBucket": "cse-c-ab22a.firebasestorage.app",
   "messagingSenderId": "708396073887",
+  "appId": "1:708396073887:web:47cce66bc0e870bf3133aa",
   "measurementId": "G-4ZRPF26RDE"
 }

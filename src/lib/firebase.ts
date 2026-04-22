@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence, signInAnonymously } from 'firebase/auth';
-import { initializeFirestore } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -20,10 +20,7 @@ export const analytics = typeof window !== 'undefined' ? (() => {
   }
 })() : null;
 
-// Use initializeFirestore with explicit database ID
-export const db = initializeFirestore(app, {
-  databaseId: 'cse-c-ab22a-default-rtdb'
-});
+export const db = getFirestore(app);
 
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
