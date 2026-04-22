@@ -8,7 +8,7 @@ import { Flame, Clock, TrendingUp, AlertTriangle } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const Dashboard: React.FC = () => {
-  const { profile, loading: authLoading } = useAuth();
+  const { profile, loading: authLoading, isAdmin } = useAuth();
   const [importantDocs, setImportantDocs] = useState<Document[]>([]);
   const [recentDocs, setRecentDocs] = useState<Document[]>([]);
   const [mostViewedDocs, setMostViewedDocs] = useState<Document[]>([]);
