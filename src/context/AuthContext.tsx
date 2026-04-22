@@ -3,7 +3,7 @@ import { User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 import { UserProfile } from '../types';
-const BOOTSTRAP_ADMINS = ['likkimahenderreddy123@gmail.com'];
+const BOOTSTRAP_ADMINS = ['likkimahenderreddy123@gmail.com', 'ndgmahi7@gmail.com'];
 
 interface AuthContextType {
   user: User | null;

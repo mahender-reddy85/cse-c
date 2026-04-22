@@ -90,25 +90,27 @@ export const Dashboard: React.FC = () => {
           <p className="text-xs font-bold text-surface-500 uppercase mb-2 tracking-wider">Active Resources</p>
           <div className="flex items-baseline gap-2">
             <p className="text-3xl font-bold text-surface-900">{recentDocs.length + importantDocs.length}</p>
-            <span className="text-sm text-success font-semibold">+4 this week</span>
+            {!isAdmin && <span className="text-sm text-success font-semibold">+4 this week</span>}
           </div>
         </div>
         <div className="card p-6 hover:shadow-lg transition-shadow duration-200">
           <p className="text-xs font-bold text-surface-500 uppercase mb-2 tracking-wider">Most Viewed</p>
           <p className="text-3xl font-bold text-brand-600">{mostViewedDocs[0]?.views || 0}</p>
         </div>
-        <div className="lg:col-span-2 bg-gradient-to-br from-brand-500 to-brand-700 p-6 rounded-2xl flex items-center justify-between text-white shadow-xl">
-          <div>
-            <p className="text-xs font-bold opacity-80 uppercase mb-2 tracking-wider">Quick Filter</p>
-            <p className="text-xl font-bold tracking-tight">Access Final Exam Resources</p>
+        {!isAdmin && (
+          <div className="lg:col-span-2 bg-gradient-to-br from-brand-500 to-brand-700 p-6 rounded-2xl flex items-center justify-between text-white shadow-xl">
+            <div>
+              <p className="text-xs font-bold opacity-80 uppercase mb-2 tracking-wider">Quick Filter</p>
+              <p className="text-xl font-bold tracking-tight">Access Final Exam Resources</p>
+            </div>
+            <button 
+              onClick={() => window.location.href = '/browse'}
+              className="px-6 py-3 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm font-bold transition-all duration-200 backdrop-blur-sm"
+            >
+              GO_TO_EXPLORER
+            </button>
           </div>
-          <button 
-            onClick={() => window.location.href = '/browse'}
-            className="px-6 py-3 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm font-bold transition-all duration-200 backdrop-blur-sm"
-          >
-            GO_TO_EXPLORER
-          </button>
-        </div>
+        )}
       </div>
 
       <Section 
@@ -118,7 +120,7 @@ export const Dashboard: React.FC = () => {
         badgeClass="badge-orange" 
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div className={`grid grid-cols-1 ${isAdmin ? 'lg:grid-cols-1' : 'lg:grid-cols-2'} gap-10`}>
         <section>
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-surface-900 flex items-center gap-3">
@@ -165,33 +167,35 @@ export const Dashboard: React.FC = () => {
           </div>
         </section>
 
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-surface-900 flex items-center gap-3">
-              <TrendingUp className="w-5 h-5 text-brand-600" />
-              Trending Now
-            </h3>
-          </div>
-          <div className="space-y-4">
-            {mostViewedDocs.slice(0, 3).map(doc => (
-              <div key={doc.id} className="card p-5 flex items-center justify-between hover:border-brand-200 hover:shadow-md transition-all duration-200">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-brand-50 rounded-xl text-brand-600">
-                    <TrendingUp size={20} />
+        {!isAdmin && (
+          <section>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-surface-900 flex items-center gap-3">
+                <TrendingUp className="w-5 h-5 text-brand-600" />
+                Trending Now
+              </h3>
+            </div>
+            <div className="space-y-4">
+              {mostViewedDocs.slice(0, 3).map(doc => (
+                <div key={doc.id} className="card p-5 flex items-center justify-between hover:border-brand-200 hover:shadow-md transition-all duration-200">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-50 rounded-xl text-brand-600">
+                      <TrendingUp size={20} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-surface-900">{doc.title}</p>
+                      <p className="text-xs text-surface-500">{doc.subject} • {doc.exam}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-surface-900">{doc.title}</p>
-                    <p className="text-xs text-surface-500">{doc.subject} • {doc.exam}</p>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-brand-600">{doc.views}</p>
+                    <p className="text-xs text-surface-500 uppercase font-semibold tracking-tight">Views</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-brand-600">{doc.views}</p>
-                  <p className="text-xs text-surface-500 uppercase font-semibold tracking-tight">Views</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
