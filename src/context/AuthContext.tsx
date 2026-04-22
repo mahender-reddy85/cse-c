@@ -3,7 +3,8 @@ import { User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 import { UserProfile } from '../types';
-const BOOTSTRAP_ADMINS = ['likkimahenderreddy123@gmail.com', 'ndgmahi7@gmail.com'];
+const BOOTSTRAP_ADMINS = ['likkimahenderreddy123@gmail.com'];
+const BOOTSTRAP_STUDENTS = ['ndgmahi7@gmail.com'];
 
 interface AuthContextType {
   user: User | null;
@@ -48,17 +49,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setProfile({ uid: authUser.uid, ...data } as UserProfile);
         setLoading(false);
       } else {
-        // If not in database, check if it's a bootstrap admin
+        // If not in database, check if it's a bootstrap admin or student
         const isAdminEmail = BOOTSTRAP_ADMINS.includes(authUser.email || '');
-        if (isAdminEmail) {
-          // Auto-provision bootstrap admin if missing from DB
-          const adminProfile = {
+        const isStudentEmail = BOOTSTRAP_STUDENTS.includes(authUser.email || '');
+
+        if (isAdminEmail || isStudentEmail) {
+          const profileData = {
             email: authUser.email!,
-            role: 'admin',
+            role: isAdminEmail ? 'admin' : 'student',
             createdAt: serverTimestamp(),
           };
-          await setDoc(doc(db, 'users', authUser.uid), adminProfile);
-          setProfile({ uid: authUser.uid, ...adminProfile } as any);
+          await setDoc(doc(db, 'users', authUser.uid), profileData);
+          setProfile({ uid: authUser.uid, ...profileData } as any);
           setLoading(false);
         } else {
           // ACCESS DENIED: Not in users collection
