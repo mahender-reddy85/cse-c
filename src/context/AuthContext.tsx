@@ -75,14 +75,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     });
       } else {
-        // No user? Auto-login as guest
-        try {
-          await signInAnonymously(auth);
-          // onAuthStateChanged will trigger again
-        } catch (error) {
-          console.error("Auto-guest login failed:", error);
-          setLoading(false);
-        }
+        setProfile(null);
+        setLoading(false);
       }
     });
 
