@@ -4,12 +4,12 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { RequestDoc, Submission } from '../types';
-import { Send, Upload, Clock, CheckCircle2, XCircle, FilePlus, MessageCirclePlus } from 'lucide-react';
+import { Send, Upload, CheckCircle2, XCircle, FilePlus, MessageCirclePlus, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const Requests: React.FC = () => {
   const { user, profile, loading: authLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState<'request' | 'submit' | 'history'>('request');
+  const [activeTab, setActiveTab] = useState<'request' | 'submit'>('request');
   
   // Form States
   const [reqTitle, setReqTitle] = useState('');
@@ -23,6 +23,7 @@ export const Requests: React.FC = () => {
   
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [submitAnimation, setSubmitAnimation] = useState<'submit' | 'request' | null>(null);
 
   // History States
   const [myRequests, setMyRequests] = useState<RequestDoc[]>([]);
@@ -61,6 +62,8 @@ export const Requests: React.FC = () => {
         status: 'pending',
         createdAt: serverTimestamp()
       });
+      
+      setSubmitAnimation('request');
       setMessage({ type: 'success', text: 'REQUEST_TRANSMITTED_SUCCESSFULLY' });
       setReqTitle(''); setReqSubject(''); setReqUnit('');
     } catch (err) {
@@ -70,12 +73,18 @@ export const Requests: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !profile || !subFile) return;
-    
+    if (!subFile || !user || !profile || loading) return;
+
+    // Client-side validation
     if (subFile.size > 10 * 1024 * 1024) {
       setMessage({ type: 'error', text: 'FILE_SIZE_EXCEEDS_10MB_LIMIT' });
+      return;
+    }
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(subFile.type)) {
+      setMessage({ type: 'error', text: 'ONLY_PDF_AND_IMAGES_SUPPORTED' });
       return;
     }
 
@@ -96,6 +105,7 @@ export const Requests: React.FC = () => {
         createdAt: serverTimestamp()
       });
 
+      setSubmitAnimation('submit');
       setMessage({ type: 'success', text: 'SUBMISSION_UPLINK_COMPLETE' });
       setSubTitle(''); setSubSubject(''); setSubUnit(''); setSubFile(null);
     } catch (err) {
@@ -106,48 +116,177 @@ export const Requests: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-          Communications
-        </h1>
-        <p className="text-xs text-slate-500 font-medium">Request specific documents or contribute your own material</p>
-      </header>
-
-      <div className="flex gap-4 border-b border-slate-200">
-        {[
-          { id: 'request', label: 'Request Doc', icon: MessageCirclePlus },
-          { id: 'submit', label: 'Submit Resource', icon: FilePlus },
-          { id: 'history', label: 'My Activity', icon: Clock },
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-6 py-3 text-sm font-semibold transition-all relative ${
-              activeTab === tab.id 
-              ? 'text-brand-600' 
-              : 'text-slate-400 hover:text-slate-600'
-            }`}
+    <div className="max-w-7xl mx-auto">
+      {/* Main Content Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
+        {/* Dividing Line */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-slate-200 transform -translate-x-1/2 hidden lg:block"></div>
+        
+        {/* Left Column - Submit Resource Form */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-3">
+            <FilePlus size={16} className="text-brand-600" />
+            <h2 className="text-lg font-bold text-slate-800">Submit Resource</h2>
+          </div>
+          
+          <motion.form 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onSubmit={handleSubmission} 
+            className="card p-5 space-y-4 relative"
           >
-            <tab.icon size={16} />
-            {tab.label}
-            {activeTab === tab.id && (
-              <motion.div 
-                layoutId="activeTab" 
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-600 rounded-full"
-              />
-            )}
-          </button>
-        ))}
+            <div className="space-y-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Resource Title</label>
+                <input required value={subTitle} onChange={e => setSubTitle(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. DBMS Handwritten Notes" />
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Subject</label>
+                  <input required value={subSubject} onChange={e => setSubSubject(e.target.value)} className="input-field text-sm py-2" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Unit</label>
+                  <input value={subUnit} onChange={e => setSubUnit(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Unit 1" />
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Payload File (Max 10MB)</label>
+                <div className="border-2 border-dashed border-slate-200 p-4 rounded-lg text-center hover:border-brand-300 transition-colors cursor-pointer relative bg-slate-50/50 group">
+                  <input 
+                    type="file" 
+                    required 
+                    onChange={e => setSubFile(e.target.files?.[0] || null)}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    accept=".pdf,image/*"
+                  />
+                  <Upload className="mx-auto mb-2 text-slate-300 group-hover:text-brand-600 transition-colors" size={24} />
+                  <p className="text-xs font-semibold text-slate-600">
+                    {subFile ? subFile.name : 'Click or drag to upload document'}
+                  </p>
+                  <p className="text-[9px] text-slate-400 mt-1 font-medium uppercase tracking-tighter">Accepted formats: PDF, JPG, PNG</p>
+                </div>
+              </div>
+            </div>
+            <button type="submit" disabled={loading} className="btn-primary w-full py-2 text-sm">
+              <Upload size={14} />
+              <span>{loading ? 'Uploading...' : 'Submit to Admin'}</span>
+            </button>
+          </motion.form>
+        </div>
+
+        {/* Right Column - Request Form */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-3">
+            <MessageCirclePlus size={16} className="text-brand-600" />
+            <h2 className="text-lg font-bold text-slate-800">Request Doc</h2>
+          </div>
+          
+          <motion.form 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onSubmit={handleRequest} 
+            className="card p-5 space-y-4 relative"
+          >
+            <div className="space-y-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Document Title</label>
+                <input required value={reqTitle} onChange={e => setReqTitle(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Operating Systems Previous Year Paper" />
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Subject</label>
+                  <input required value={reqSubject} onChange={e => setReqSubject(e.target.value)} className="input-field text-sm py-2" placeholder="Select or type subject" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Unit</label>
+                  <input value={reqUnit} onChange={e => setReqUnit(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Unit 3" />
+                </div>
+              </div>
+            </div>
+            <button type="submit" disabled={loading} className="btn-primary w-full py-2 text-sm">
+              <Send size={14} />
+              <span>{loading ? 'Transmitting...' : 'Submit Request'}</span>
+            </button>
+          </motion.form>
+        </div>
       </div>
 
+      {/* Global Success Animation */}
+      <AnimatePresence>
+        {submitAnimation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm z-[9999] p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              className="bg-white p-10 rounded-[32px] shadow-2xl flex flex-col items-center gap-6 max-w-xs w-full"
+              onAnimationComplete={() => setTimeout(() => setSubmitAnimation(null), 2500)}
+            >
+              <div className="relative w-24 h-24">
+                <svg className="w-full h-full" viewBox="0 0 100 100">
+                  <motion.circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    fill="none"
+                    stroke="#10b981"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                  />
+                  <motion.path
+                    d="M30 52 L45 67 L70 37"
+                    fill="none"
+                    stroke="#10b981"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
+                  />
+                </svg>
+              </div>
+              <div className="text-center space-y-1">
+                <motion.h3
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2 }}
+                  className="text-slate-900 font-bold text-lg"
+                >
+                  Success!
+                </motion.h3>
+                <motion.p
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.4 }}
+                  className="text-slate-500 font-medium text-sm"
+                >
+                  {submitAnimation === 'submit' ? 'Document uploaded to admin.' : 'Your request has been sent.'}
+                </motion.p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+
+      {/* Message Toast */}
       <AnimatePresence mode="wait">
         {message && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className={`p-4 border rounded-lg text-sm font-medium flex items-center justify-between ${
+            className={`fixed top-4 right-4 z-50 p-4 border rounded-lg text-sm font-medium flex items-center justify-between max-w-md ${
               message.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
             }`}
           >
@@ -159,144 +298,6 @@ export const Requests: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="mt-8">
-        {activeTab === 'request' && (
-          <motion.form 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onSubmit={handleRequest} 
-            className="card p-8 space-y-6"
-          >
-            <div className="space-y-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Document Title</label>
-                <input required value={reqTitle} onChange={e => setReqTitle(e.target.value)} className="input-field" placeholder="e.g. Operating Systems Previous Year Paper" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Subject</label>
-                  <input required value={reqSubject} onChange={e => setReqSubject(e.target.value)} className="input-field" placeholder="Select or type subject" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Unit</label>
-                  <input required value={reqUnit} onChange={e => setReqUnit(e.target.value)} className="input-field" placeholder="e.g. Unit 3" />
-                </div>
-              </div>
-            </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
-              <Send size={18} />
-              <span>{loading ? 'Transmitting Request...' : 'Submit Request'}</span>
-            </button>
-          </motion.form>
-        )}
-
-        {activeTab === 'submit' && (
-          <motion.form 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onSubmit={handleSubmit} 
-            className="card p-8 space-y-6"
-          >
-            <div className="space-y-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Resource Title</label>
-                <input required value={subTitle} onChange={e => setSubTitle(e.target.value)} className="input-field" placeholder="e.g. DBMS Handwritten Notes" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Subject</label>
-                  <input required value={subSubject} onChange={e => setSubSubject(e.target.value)} className="input-field" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Unit</label>
-                  <input required value={subUnit} onChange={e => setSubUnit(e.target.value)} className="input-field" />
-                </div>
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Payload File (Max 10MB)</label>
-                <div className="border-2 border-dashed border-slate-200 p-10 rounded-xl text-center hover:border-brand-300 transition-colors cursor-pointer relative bg-slate-50/50 group">
-                  <input 
-                    type="file" 
-                    required 
-                    onChange={e => setSubFile(e.target.files?.[0] || null)}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    accept=".pdf,image/*"
-                  />
-                  <Upload className="mx-auto mb-3 text-slate-300 group-hover:text-brand-600 transition-colors" size={40} />
-                  <p className="text-sm font-semibold text-slate-600">
-                    {subFile ? subFile.name : 'Click or drag to upload document'}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-2 font-medium uppercase tracking-tighter">Accepted formats: PDF, JPG, PNG</p>
-                </div>
-              </div>
-            </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
-              <Upload size={18} />
-              <span>{loading ? 'Uploading Resource...' : 'Submit to Admin'}</span>
-            </button>
-          </motion.form>
-        )}
-
-        {activeTab === 'history' && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
-          >
-            <section>
-              <h3 className="text-xs font-bold text-slate-400 mb-4 px-1 uppercase tracking-widest leading-none">My Requests</h3>
-              <div className="space-y-3">
-                {myRequests.map(r => (
-                  <div key={r.id} className="card p-4 flex items-center justify-between border-slate-100 shadow-none hover:shadow-sm transition-all">
-                    <div>
-                      <p className="text-sm font-bold text-slate-800">{r.title}</p>
-                      <p className="text-[10px] font-medium text-slate-400 uppercase">{r.subject} • Unit {r.unit}</p>
-                    </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                      r.status === 'fulfilled' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
-                    }`}>
-                      {r.status}
-                    </span>
-                  </div>
-                ))}
-                {myRequests.length === 0 && (
-                  <div className="card p-8 text-center bg-slate-50 border-dashed shadow-none">
-                    <p className="text-xs font-bold text-slate-300 uppercase italic">No requests logged</p>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section>
-              <h3 className="text-xs font-bold text-slate-400 mb-4 px-1 uppercase tracking-widest leading-none">My Submissions</h3>
-              <div className="space-y-3">
-                {mySubmissions.map(s => (
-                  <div key={s.id} className="card p-4 flex items-center justify-between border-slate-100 shadow-none hover:shadow-sm transition-all">
-                    <div>
-                      <p className="text-sm font-bold text-slate-800">{s.title}</p>
-                      <p className="text-[10px] font-medium text-slate-400 uppercase">{s.subject} • {new Date(s.createdAt?.toDate()).toLocaleDateString()}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                       {s.status === 'approved' && <CheckCircle2 size={16} className="text-green-500" />}
-                       {s.status === 'rejected' && <XCircle size={16} className="text-red-500" />}
-                       {s.status === 'pending' && <Clock size={16} className="text-slate-300 animate-pulse" />}
-                       <span className={`text-[10px] font-bold uppercase ${
-                         s.status === 'approved' ? 'text-green-500' : s.status === 'rejected' ? 'text-red-500' : 'text-slate-400'
-                       }`}>{s.status}</span>
-                    </div>
-                  </div>
-                ))}
-                {mySubmissions.length === 0 && (
-                  <div className="card p-8 text-center bg-slate-50 border-dashed shadow-none">
-                    <p className="text-xs font-bold text-slate-300 uppercase italic">No submissions logged</p>
-                  </div>
-                )}
-              </div>
-            </section>
-          </motion.div>
-        )}
-      </div>
     </div>
   );
 };

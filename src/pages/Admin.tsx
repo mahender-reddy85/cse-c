@@ -15,7 +15,7 @@ export const Admin: React.FC = () => {
 
   // Upload Form
   const [title, setTitle] = useState('');
-  const [exam, setExam] = useState<'Mid' | 'Final'>('Mid');
+  const [exam, setExam] = useState<'Mid-1' | 'Mid-2' | 'SEM'>('Mid-1');
   const [subject, setSubject] = useState('');
   const [unit, setUnit] = useState('');
   const [tags, setTags] = useState('');
@@ -43,6 +43,18 @@ export const Admin: React.FC = () => {
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !user) return;
+
+    // Client-side validation
+    if (file.size > 10 * 1024 * 1024) {
+      setStatus({ type: 'error', text: 'FILE_SIZE_EXCEEDS_10MB_LIMIT' });
+      return;
+    }
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      setStatus({ type: 'error', text: 'ONLY_PDF_AND_IMAGES_SUPPORTED' });
+      return;
+    }
+
     setLoading(true);
     try {
       const fileRef = ref(storage, `documents/${Date.now()}_${file.name}`);
@@ -82,12 +94,12 @@ export const Admin: React.FC = () => {
       // 2. Add as a document
       await addDoc(collection(db, 'documents'), {
         title: sub.title,
-        exam: 'Mid', // Default
+        exam: 'Mid-1', // Default, admin can edit later
         subject: sub.subject,
         unit: sub.unit,
         tags: ['student-submission'],
         fileUrl: sub.fileUrl,
-        fileType: sub.fileUrl.includes('.pdf') ? 'pdf' : 'image', // Basic guess
+        fileType: sub.fileUrl.includes('.pdf') ? 'pdf' : 'image',
         uploadedBy: sub.submittedBy,
         createdAt: serverTimestamp(),
         views: 0,
@@ -165,8 +177,9 @@ export const Admin: React.FC = () => {
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Exam Period</label>
               <select value={exam} onChange={e => setExam(e.target.value as any)} className="input-field">
-                <option value="Mid">Mid-Semester</option>
-                <option value="Final">Final-Semester</option>
+                <option value="Mid-1">Mid-1</option>
+                <option value="Mid-2">Mid-2</option>
+                <option value="SEM">Semester Exam (SEM)</option>
               </select>
             </div>
             <div className="flex flex-col gap-1.5">

@@ -91,10 +91,19 @@ export const Search: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="card flex flex-col items-center justify-center py-24 text-slate-400 border-dashed">
-                <p className="text-sm font-bold uppercase tracking-widest text-slate-400">No results found for "{searchTerm}"</p>
-                <p className="text-xs mt-1">Try searching for a different keyword or subject.</p>
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col items-center justify-center py-20 px-6 text-center"
+              >
+                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-300 dark:text-slate-600 mb-4 shadow-inner">
+                  <SearchIcon size={32} />
+                </div>
+                <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">No matches found</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] mt-1 leading-relaxed">
+                  We couldn't find anything for "{searchTerm}". Try checking your spelling or use different keywords.
+                </p>
+              </motion.div>
             )}
           </div>
         ) : (

@@ -3,6 +3,7 @@ import { User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 import { UserProfile } from '../types';
+const BOOTSTRAP_ADMINS = ['likkimahenderreddy123@gmail.com'];
 
 interface AuthContextType {
   user: User | null;
@@ -15,7 +16,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
-  loading: true,
+  loading: false,
   isAdmin: false,
   isGuest: false,
 });
@@ -25,7 +26,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let unsubscribeProfile: (() => void) | null = null;
@@ -39,46 +40,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (authUser) {
-        setLoading(true); // Ensure loading is true while we fetch or create profile
-        unsubscribeProfile = onSnapshot(doc(db, 'users', authUser.uid), async (snapshot) => {
-          if (snapshot.exists()) {
-            setProfile({ uid: authUser.uid, ...snapshot.data() } as UserProfile);
-            setLoading(false);
-          } else {
-            if (authUser.isAnonymous) {
-              try {
-                await setDoc(doc(db, 'users', authUser.uid), {
-                  email: 'guest@examhub.local',
-                  role: 'student',
-                  createdAt: serverTimestamp(),
-                  isGuest: true
-                });
-              } catch (e) {
-                console.error("Auto-provision guest failed:", e);
-                setLoading(false);
-              }
-            } else {
-              // Non-anonymous user with no profile yet.
-              // This can happen briefly during Google login redirects.
-              // We'll keep loading true for a bit or if they truly have no profile, 
-              // the login logic usually handles the creation.
-              setProfile(null);
-              setLoading(false);
-            }
-          }
-        }, (error) => {
-          console.error("Profile sync error:", error);
+        // Don't set loading to true for existing users
+        setLoading(false);
+    unsubscribeProfile = onSnapshot(doc(db, 'users', authUser.uid), async (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        setProfile({ uid: authUser.uid, ...data } as UserProfile);
+        setLoading(false);
+      } else {
+        // If not in database, check if it's a bootstrap admin
+        const isAdminEmail = BOOTSTRAP_ADMINS.includes(authUser.email || '');
+        if (isAdminEmail) {
+          // Auto-provision bootstrap admin if missing from DB
+          const adminProfile = {
+            email: authUser.email!,
+            role: 'admin',
+            createdAt: serverTimestamp(),
+          };
+          await setDoc(doc(db, 'users', authUser.uid), adminProfile);
+          setProfile({ uid: authUser.uid, ...adminProfile } as any);
+          setLoading(false);
+        } else {
+          // ACCESS DENIED: Not in users collection
+          console.error("Access Denied: User not in allowlist");
+          await auth.signOut();
           setProfile(null);
           setLoading(false);
-        });
+          alert("Access Denied: You are not authorized to use this portal. Please contact an admin.");
+        }
+      }
+    }, (error) => {
+      console.error("Profile sync error:", error);
+      setProfile(null);
+      setLoading(false);
+    });
       } else {
-        // No user? Auto-login as guest for the "Remove login page only better" experience
+        // No user? Auto-login as guest
         try {
           await signInAnonymously(auth);
           // onAuthStateChanged will trigger again
         } catch (error) {
           console.error("Auto-guest login failed:", error);
-          setProfile(null);
           setLoading(false);
         }
       }
@@ -94,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     profile,
     loading,
-    isAdmin: profile?.role === 'admin',
+    isAdmin: profile?.role === 'admin' || BOOTSTRAP_ADMINS.includes(user?.email || ''),
     isGuest: !!profile?.isGuest || user?.isAnonymous || false,
   };
 

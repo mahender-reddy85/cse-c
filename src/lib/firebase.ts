@@ -20,8 +20,10 @@ export const analytics = typeof window !== 'undefined' ? (() => {
   }
 })() : null;
 
-// Use initializeFirestore with standard settings to avoid assertion errors
-export const db = initializeFirestore(app, {}, (firebaseConfig as any).firestoreDatabaseId || '(default)');
+// Use initializeFirestore with explicit database ID
+export const db = initializeFirestore(app, {
+  databaseId: 'cse-c-ab22a-default-rtdb'
+});
 
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
