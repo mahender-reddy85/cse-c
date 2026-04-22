@@ -4,21 +4,24 @@ import { motion } from 'motion/react';
 import { Document } from '../types';
 import { db } from '../lib/firebase';
 import { doc, updateDoc, increment } from 'firebase/firestore';
+import { PDFPreview } from './PDFPreview';
 
 interface DocumentCardProps {
   doc: Document;
 }
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
+  const [isPreviewOpen, setIsPreviewOpen] = React.useState(false);
+
   const handleView = async () => {
     try {
       await updateDoc(doc(db, 'documents', docData.id), {
         views: increment(1)
       });
-      window.open(docData.fileUrl, '_blank');
+      setIsPreviewOpen(true);
     } catch (error) {
       console.error("Error updating views:", error);
-      window.open(docData.fileUrl, '_blank');
+      setIsPreviewOpen(true);
     }
   };
 
@@ -88,6 +91,12 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
           Get
         </button>
       </div>
+      <PDFPreview 
+        isOpen={isPreviewOpen} 
+        onClose={() => setIsPreviewOpen(false)} 
+        fileUrl={docData.fileUrl} 
+        title={docData.title} 
+      />
     </motion.div>
   );
 };
