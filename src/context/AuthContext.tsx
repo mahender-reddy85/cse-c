@@ -46,7 +46,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     unsubscribeProfile = onSnapshot(doc(db, 'users', authUser.uid), async (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
-        setProfile({ uid: authUser.uid, ...data } as UserProfile);
+        const isAdminEmail = BOOTSTRAP_ADMINS.includes(authUser.email || '');
+        const isStudentEmail = BOOTSTRAP_STUDENTS.includes(authUser.email || '');
+        
+        // Force sync role if it's a bootstrap email and doesn't match
+        const targetRole = isAdminEmail ? 'admin' : (isStudentEmail ? 'student' : data.role);
+        
+        if (targetRole !== data.role) {
+          await setDoc(doc(db, 'users', authUser.uid), { ...data, role: targetRole }, { merge: true });
+          setProfile({ uid: authUser.uid, ...data, role: targetRole } as any);
+        } else {
+          setProfile({ uid: authUser.uid, ...data } as UserProfile);
+        }
         setLoading(false);
       } else {
         // If not in database, check if it's a bootstrap admin or student
