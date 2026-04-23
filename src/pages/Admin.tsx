@@ -20,7 +20,6 @@ export const Admin: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [unit, setUnit] = useState('');
   const [tags, setTags] = useState('');
-  const [isImportant, setIsImportant] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
   // Lists
@@ -80,8 +79,7 @@ export const Admin: React.FC = () => {
         fileUrl,
         fileType,
         uploadedBy: user.email,
-        createdAt: serverTimestamp(),
-        isImportant
+        createdAt: serverTimestamp()
       });
 
       setShowSuccess(true);
@@ -108,8 +106,7 @@ export const Admin: React.FC = () => {
         fileUrl: sub.fileUrl,
         fileType: sub.fileUrl.includes('.pdf') ? 'pdf' : 'image',
         uploadedBy: sub.submittedBy,
-        createdAt: serverTimestamp(),
-        isImportant: false
+        createdAt: serverTimestamp()
       });
       setStatus({ type: 'success', text: 'SUBMISSION_APPROVED_AND_MOVED_TO_DOCS' });
     } catch (err) {
@@ -189,7 +186,17 @@ export const Admin: React.FC = () => {
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Subject Name</label>
-              <input required value={subject} onChange={e => setSubject(e.target.value)} className="input-field" placeholder="e.g. DBMS" />
+              <select 
+                required 
+                value={subject} 
+                onChange={e => setSubject(e.target.value)} 
+                className="input-field"
+              >
+                <option value="">Select Subject</option>
+                {['AI', 'ML', 'AFLC', 'ITE', 'WT', 'WT LAB', 'ML LAB', 'Others'].map(sub => (
+                  <option key={sub} value={sub}>{sub}</option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -204,17 +211,6 @@ export const Admin: React.FC = () => {
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tags</label>
                   <input value={tags} onChange={e => setTags(e.target.value)} className="input-field" placeholder="imp, notes" />
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                <input 
-                  type="checkbox" 
-                  id="important" 
-                  checked={isImportant} 
-                  onChange={e => setIsImportant(e.target.checked)} 
-                  className="w-5 h-5 rounded text-blue-600 focus:ring-blue-600 border-slate-300 cursor-pointer" 
-                />
-                <label htmlFor="important" className="text-sm font-bold text-slate-700 cursor-pointer">Mark as Critical Resource</label>
               </div>
             </div>
 
@@ -239,14 +235,27 @@ export const Admin: React.FC = () => {
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-base shadow-lg shadow-blue-100">
+          <button 
+            type="submit" 
+            disabled={loading} 
+            className="btn-primary w-full h-16 text-base shadow-lg shadow-blue-100 group relative overflow-hidden"
+          >
             {loading ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center gap-3">
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Initializing Deployment...
+                <span>Processing Upload...</span>
               </div>
             ) : (
-              'Execute Deployment'
+              <div className="relative h-full w-full flex items-center justify-center">
+                {/* Initial Text */}
+                <span className="absolute transition-all duration-500 transform group-hover:-translate-y-12 group-hover:opacity-0 font-bold uppercase tracking-widest">
+                  Upload
+                </span>
+                {/* Hover Text */}
+                <span className="absolute transition-all duration-500 transform translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 font-black uppercase tracking-[0.2em]">
+                  Deploy
+                </span>
+              </div>
             )}
           </button>
         </form>
