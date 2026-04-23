@@ -19,6 +19,7 @@ export const Requests: React.FC = () => {
   const [subTitle, setSubTitle] = useState('');
   const [subSubject, setSubSubject] = useState('');
   const [subUnit, setSubUnit] = useState('');
+  const [subTags, setSubTags] = useState('');
   const [subFile, setSubFile] = useState<File | null>(null);
   
   const [loading, setLoading] = useState(false);
@@ -100,6 +101,7 @@ export const Requests: React.FC = () => {
         title: subTitle,
         subject: subSubject,
         unit: subUnit.toLowerCase().replace(/^unit\s*/i, ''),
+        tags: subTags.split(',').map(t => t.trim()).filter(t => t),
         fileUrl,
         submittedBy: userEmail,
         status: 'pending',
@@ -107,7 +109,7 @@ export const Requests: React.FC = () => {
       });
 
       setSubmitAnimation('submit');
-      setSubTitle(''); setSubSubject(''); setSubUnit(''); setSubFile(null);
+      setSubTitle(''); setSubSubject(''); setSubUnit(''); setSubTags(''); setSubFile(null);
     } catch (err) {
       setMessage({ type: 'error', text: 'UPLINK_PROTOCOL_FAILURE' });
     } finally {
@@ -183,6 +185,19 @@ export const Requests: React.FC = () => {
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Unit</label>
                   <input value={subUnit} onChange={e => setSubUnit(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Unit 1" />
                 </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Tags (Max 2, separated by comma)</label>
+                <input 
+                  value={subTags} 
+                  onChange={e => {
+                    const val = e.target.value;
+                    const commaCount = (val.match(/,/g) || []).length;
+                    if (commaCount <= 1) setSubTags(val);
+                  }} 
+                  className="input-field text-sm py-2" 
+                  placeholder="e.g. notes, important" 
+                />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Payload File (Max 10MB)</label>
