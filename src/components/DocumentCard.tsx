@@ -41,6 +41,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -4, shadow: "lg" }}
       className="card group relative flex flex-col h-full bg-white transition-all overflow-hidden hover:shadow-xl"
+    >
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1.5 flex-1">
