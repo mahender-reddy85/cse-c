@@ -3,16 +3,8 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   
-  --color-brand-50: #f8fafc;
-  --color-brand-100: #f1f5f9;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  
-  --color-surface-50: #ffffff;
-  --color-surface-100: #f8fafc;
-  --color-surface-200: #f1f5f9;
-  --color-surface-600: #475569;
-  --color-surface-900: #0f172a;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
 }
 
 @layer base {

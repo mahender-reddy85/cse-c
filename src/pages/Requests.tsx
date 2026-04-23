@@ -132,7 +132,7 @@ export const Requests: React.FC = () => {
         {/* Left Column - Submit Resource Form */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-3">
-            <FilePlus size={16} className="text-brand-600" />
+            <FilePlus size={16} className="text-blue-600" />
             <h2 className="text-lg font-bold text-slate-800">Submit Resource</h2>
           </div>
           
@@ -159,7 +159,7 @@ export const Requests: React.FC = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Payload File (Max 10MB)</label>
-                <div className="border-2 border-dashed border-slate-200 p-4 rounded-lg text-center hover:border-brand-300 transition-colors cursor-pointer relative bg-slate-50/50 group">
+                <div className="border-2 border-dashed border-slate-200 p-4 rounded-lg text-center hover:border-blue-300 transition-colors cursor-pointer relative bg-slate-50/50 group">
                   <input 
                     type="file" 
                     required 
@@ -167,7 +167,7 @@ export const Requests: React.FC = () => {
                     className="absolute inset-0 opacity-0 cursor-pointer"
                     accept=".pdf,image/*"
                   />
-                  <Upload className="mx-auto mb-2 text-slate-300 group-hover:text-brand-600 transition-colors" size={24} />
+                  <Upload className="mx-auto mb-2 text-slate-300 group-hover:text-blue-600 transition-colors" size={24} />
                   <p className="text-xs font-semibold text-slate-600">
                     {subFile ? subFile.name : 'Click or drag to upload document'}
                   </p>
@@ -185,7 +185,7 @@ export const Requests: React.FC = () => {
         {/* Right Column - Request Form */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-3">
-            <MessageCirclePlus size={16} className="text-brand-600" />
+            <MessageCirclePlus size={16} className="text-blue-600" />
             <h2 className="text-lg font-bold text-slate-800">Request Doc</h2>
           </div>
           

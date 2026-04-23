@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Compass, ShieldAlert, LogOut, LogIn, Search as SearchIcon, Clock } from 'lucide-react';
 import { auth } from '../../lib/firebase';
@@ -83,12 +83,12 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           </nav>
         </div>
 
-        <div className="mt-auto p-4 border-t border-surface-200">
+        <div className="mt-auto p-4 border-t border-slate-200">
           {isGuest ? (
             <div className="space-y-3">
-              <div className="bg-gradient-to-r from-brand-50 to-blue-50 border border-brand-200 p-3 rounded-xl">
-                <p className="text-xs font-bold text-brand-700 uppercase tracking-wider mb-1">Guest Mode</p>
-                <p className="text-xs text-brand-600/90 leading-relaxed">Connect your account to save requests.</p>
+              <div className="bg-gradient-to-r from-blue-50 to-slate-50 border border-blue-200 p-3 rounded-xl">
+                <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-1">Guest Mode</p>
+                <p className="text-xs text-blue-600/90 leading-relaxed">Connect your account to save requests.</p>
               </div>
               <button
                 onClick={handleLoginRedirect}
@@ -101,19 +101,19 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           ) : (
             <>
               <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-xl overflow-hidden mb-3 border border-slate-200">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
                   {user?.email?.substring(0, 2).toUpperCase() || 'U'}
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-xs font-semibold truncate text-surface-900">{user?.email}</p>
-                  <p className="text-xs text-surface-500 uppercase tracking-tight font-bold">
+                  <p className="text-xs font-semibold truncate text-slate-900">{user?.email}</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-tight font-bold">
                     {isAdmin ? 'ADMIN' : 'USER'}
                   </p>
                 </div>
               </div>
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-semibold text-surface-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 border border-transparent hover:border-red-100"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 border border-transparent hover:border-red-100"
               >
                 <LogOut size={14} />
                 <span>Sign Out</span>
@@ -125,7 +125,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-60 flex flex-col min-h-screen w-full pb-16 lg:pb-0">
-        <header className="h-20 bg-white/80 backdrop-blur-lg border-b border-surface-200 grid grid-cols-3 items-center px-4 md:px-8 shrink-0 sticky top-0 z-40 shadow-sm">
+        <header className="h-20 bg-white/80 backdrop-blur-lg border-b border-slate-200 grid grid-cols-3 items-center px-4 md:px-8 shrink-0 sticky top-0 z-40 shadow-sm">
           {/* Left: Brand (Mobile Only) */}
           <div className="flex items-center">
             <h1 className="lg:hidden text-2xl font-black text-slate-900 shrink-0">CSE-C</h1>
@@ -134,7 +134,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           {/* Center: Search Bar */}
           <div className="flex justify-center">
             <form onSubmit={handleSearch} className="w-full max-w-xs md:max-w-md relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
                 <SearchIcon size={14} className="md:w-4 md:h-4" />
               </div>
               <input 

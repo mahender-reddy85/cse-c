@@ -143,24 +143,24 @@ export const Admin: React.FC = () => {
           { id: 'requests', label: 'User Requests', icon: MessageSquare },
           { id: 'submissions', label: 'User Submissions', icon: ClipboardCheck },
         ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all relative whitespace-nowrap ${
-              activeTab === tab.id 
-              ? 'text-brand-600' 
-              : 'text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            <tab.icon size={16} />
-            {tab.label}
-            {activeTab === tab.id && (
-              <motion.div 
-                layoutId="adminTab" 
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-600 rounded-full"
-              />
-            )}
-          </button>
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all relative whitespace-nowrap ${
+                activeTab === tab.id 
+                ? 'text-blue-600' 
+                : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              <tab.icon size={16} />
+              {tab.label}
+              {activeTab === tab.id && (
+                <motion.div 
+                  layoutId="adminTab" 
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full"
+                />
+              )}
+            </button>
         ))}
       </div>
 
@@ -212,7 +212,7 @@ export const Admin: React.FC = () => {
                   id="important" 
                   checked={isImportant} 
                   onChange={e => setIsImportant(e.target.checked)} 
-                  className="w-5 h-5 rounded text-brand-600 focus:ring-brand-600 border-slate-300 cursor-pointer" 
+                  className="w-5 h-5 rounded text-blue-600 focus:ring-blue-600 border-slate-300 cursor-pointer" 
                 />
                 <label htmlFor="important" className="text-sm font-bold text-slate-700 cursor-pointer">Mark as Critical Resource</label>
               </div>
@@ -228,8 +228,8 @@ export const Admin: React.FC = () => {
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
                   accept=".pdf,image/*" 
                 />
-                <div className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all ${file ? 'border-brand-500 bg-brand-50/30' : 'border-slate-200 bg-slate-50/50 hover:border-brand-300 hover:bg-brand-50/10'}`}>
-                  <Upload className={`mb-3 ${file ? 'text-brand-600' : 'text-slate-400'}`} size={32} />
+                <div className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all ${file ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200 bg-slate-50/50 hover:border-blue-300 hover:bg-blue-50/10'}`}>
+                  <Upload className={`mb-3 ${file ? 'text-blue-600' : 'text-slate-400'}`} size={32} />
                   <p className="text-sm font-bold text-slate-700">
                     {file ? file.name : 'Drop file or click to browse'}
                   </p>
@@ -239,7 +239,7 @@ export const Admin: React.FC = () => {
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-base shadow-lg shadow-brand-200">
+          <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-base shadow-lg shadow-blue-100">
             {loading ? (
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -404,7 +404,7 @@ export const Admin: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">{s.subject} • Unit {s.unit} • Contributor: {s.submittedBy}</p>
-                <a href={s.fileUrl} target="_blank" className="text-[10px] font-bold text-brand-600 hover:underline mt-1 inline-block">PREVIEW_ASSET</a>
+                <a href={s.fileUrl} target="_blank" className="text-[10px] font-bold text-blue-600 hover:underline mt-1 inline-block">PREVIEW_ASSET</a>
               </div>
               {s.status === 'pending' && (
                 <div className="flex gap-2 self-end md:self-auto">
