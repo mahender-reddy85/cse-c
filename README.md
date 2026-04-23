@@ -1,6 +1,7 @@
 # CSE-C Exam Hub
 
 <div align="center">
+  <img src="./public/cse-c.png" width="120" height="120" alt="CSE-C Logo" />
   <h3>Your Gateway to Academic Excellence</h3>
   <p>A mobile-first, professional resource repository for CSE-C students.</p>
 </div>
@@ -13,31 +14,32 @@
 
 ## ✨ Features
 
-- **Dashboard**: Quick access to critical resources, recently added documents, and trending materials.
-- **Advanced Explorer**: Filter resources by **Exam Period** (Mid-1, Mid-2, SEM), **Subject**, and **Unit**.
-- **Global Search**: Instant search by Title, Subject, or Keywords/Tags.
-- **Student Contributions**: Students can upload their own resources (PDF/Images) for admin approval.
+- **Dashboard**: Filter resources by **Exam Period** (Mid-1, Mid-2, SEM), **Subject**, and **Unit** with real-time feedback.
+- **Global Search**: Debounced live search accessible from the header (Desktop) or the dashboard (Mobile).
 - **Request System**: Need something specific? Students can request documents directly through the app.
+- **Student Contributions**: Students can upload their own resources (PDF/Images) for admin approval.
 - **Admin Command Center**:
-  - Direct document deployment.
+  - Direct document deployment via a streamlined vertical form.
   - One-click approval/rejection of student contributions.
-  - Request fulfillment tracking.
-- **Role-Based Access**: Secure portal ensuring only authorized users can access the repository.
+  - Custom "Destruct Sequence" confirmation for secure deletions.
+- **Mobile-First Design**: Optimized header with an interactive avatar menu and balanced semester indicators.
+- **Aesthetic Excellence**: Modern "Blue & Slate" theme with smooth Framer Motion transitions.
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React.js with Tailwind CSS for high-fidelity, responsive styling.
+- **Frontend**: React.js with Tailwind CSS 4.0.
 - **Backend**: Firebase (Authentication, Firestore, Storage).
-- **Animations**: Framer Motion for smooth, premium micro-interactions and success feedback.
+- **Cloud Storage**: Cloudinary integration for organized asset management.
+- **Animations**: Motion (formerly Framer Motion) for premium micro-interactions.
 - **Icons**: Lucide React.
 
 ## 🔒 Security & Constraints
 
-- **Restricted Access**: Access is controlled via an allowlist in the `users` collection.
+- **Restricted Access**: Role-based access control for Admins and Members.
 - **File Constraints**:
   - Supported Formats: **PDF**, **JPEG**, **PNG**, **WebP**.
-  - Size Limit: **10MB** per file to ensure repository stability.
-- **View Tracking**: Automatic analytics to track the most helpful resources.
+  - Size Limit: **10MB** per file to ensure stability.
+- **Tagging**: Enforced limit of 2 tags per resource for clean categorization.
 
 ## 🏃 Run Locally
 
@@ -46,8 +48,8 @@
    ```bash
    npm install
    ```
-3. **Configure Firebase**:
-   Update `src/lib/firebase.ts` with your project credentials.
+3. **Configure Environment**:
+   Create a `.env` file with your Firebase and Cloudinary credentials.
 4. **Launch Development Server**:
    ```bash
    npm run dev
@@ -65,9 +67,8 @@
   "tags": ["string"],
   "fileUrl": "string",
   "fileType": "pdf | image",
-  "views": "number",
-  "isImportant": "boolean",
-  "uploadedBy": "email"
+  "uploadedBy": "email",
+  "createdAt": "timestamp"
 }
 ```
 

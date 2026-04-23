@@ -20,14 +20,9 @@ export const Login: React.FC = () => {
           setIsLoading(true);
           const user = result.user;
           
-          // Skip database calls for now to avoid Firestore errors
-          // TODO: Re-enable database calls once Firestore is properly configured
-          
           // Temporarily set user role based on email without database
           const isAdminEmail = BOOTSTRAP_ADMINS.includes(user.email || '');
           const userRole = isAdminEmail ? 'admin' : 'student';
-          
-          console.log('User logged in via redirect:', { email: user.email, role: userRole });
           
           navigate('/');
         }
@@ -60,19 +55,14 @@ export const Login: React.FC = () => {
       const result = await signInWithGoogle();
       const user = result.user;
       
-      // Skip database calls for now to avoid Firestore errors
-      // TODO: Re-enable database calls once Firestore is properly configured
-      
       // Temporarily set user role based on email without database
       const isAdminEmail = BOOTSTRAP_ADMINS.includes(user.email || '');
       const userRole = isAdminEmail ? 'admin' : 'student';
       
-      console.log('User logged in:', { email: user.email, role: userRole });
-      
       navigate('/');
     } catch (err: any) {
       if (err.code === 'auth/popup-closed-by-user') {
-        console.log('User closed the login popup.');
+        // User closed the popup, no action needed
       } else if (err.code === 'auth/network-request-failed') {
         setError("Network Error: Please check your internet connection or disable ad-blockers that might be blocking Firebase.");
       } else {

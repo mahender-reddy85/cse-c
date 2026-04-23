@@ -127,7 +127,7 @@ export const Admin: React.FC = () => {
     if (docToDelete) {
       await deleteDoc(doc(db, 'documents', docToDelete));
       setDocToDelete(null);
-      setStatus({ type: 'success', text: 'DOCUMENT_DESTRUCTED_SUCCESSFULLY' });
+      setStatus({ type: 'success', text: 'DOCUMENT_DELETED_SUCCESSFULLY' });
     }
   };
 
@@ -469,32 +469,24 @@ export const Admin: React.FC = () => {
             className="fixed inset-0 flex items-center justify-center bg-slate-900/80 backdrop-blur-md z-[10000] p-4"
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white dark:bg-slate-900 p-8 rounded-[32px] shadow-2xl max-w-sm w-full border border-slate-200 dark:border-slate-800 text-center space-y-6"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl max-w-[280px] w-full border border-slate-200 dark:border-slate-800 text-center space-y-5"
             >
-              <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-full flex items-center justify-center mx-auto">
-                <Trash2 size={32} />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">
-                  DESTRUCT_SEQUENCE_INITIALIZED?
-                </h3>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                  Confirm Permanent Deletion
-                </p>
-              </div>
-              <div className="flex gap-3">
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-[0.1em]">
+                Confirm Permanent Deletion?
+              </p>
+              <div className="flex gap-2">
                 <button 
                   onClick={() => setDocToDelete(null)}
-                  className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-slate-200 transition-colors"
+                  className="flex-1 py-2 px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-colors"
                 >
                   NO
                 </button>
                 <button 
                   onClick={confirmDelete}
-                  className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-700 shadow-lg shadow-red-500/20 transition-all"
+                  className="flex-1 py-2 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-red-600 dark:hover:bg-red-600 hover:text-white transition-all"
                 >
                   YES
                 </button>
