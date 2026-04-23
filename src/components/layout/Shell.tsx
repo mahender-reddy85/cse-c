@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Compass, ShieldAlert, LogOut, LogIn, Search as SearchIcon, Clock } from 'lucide-react';
 import { auth } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
@@ -8,13 +8,20 @@ import { motion } from 'motion/react';
 export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, profile, isAdmin, isGuest } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Live Search: Navigate to search page as user types
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`, { replace: true });
+    } else if (location.pathname === '/search' && !searchTerm) {
+      // Optional: Clear search and stay on page or go back
+    }
+  }, [searchTerm]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
-    }
   };
 
   const handleLogout = async () => {
