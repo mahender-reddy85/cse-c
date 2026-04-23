@@ -12,14 +12,14 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // Live Search: Navigate to search page as user types
+  // Live Search: Navigate to search page as user types, return to dashboard on clear
   useEffect(() => {
     if (searchTerm.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`, { replace: true });
-    } else if (location.pathname === '/search' && !searchTerm) {
-      // Optional: Clear search and stay on page or go back
+    } else if (location.pathname === '/search') {
+      navigate('/', { replace: true });
     }
-  }, [searchTerm]);
+  }, [searchTerm, location.pathname]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,8 +132,8 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             <h1 className="lg:hidden text-2xl font-black text-slate-900 shrink-0">CSE-C</h1>
           </div>
 
-          {/* Center: Search Bar */}
-          <div className="flex justify-center">
+          {/* Center: Search Bar (Desktop Always, Mobile only on Search Page) */}
+          <div className={`${location.pathname === '/search' ? 'flex' : 'hidden lg:flex'} justify-center flex-1 lg:flex-initial`}>
             <form onSubmit={handleSearch} className="w-full max-w-xs md:max-w-md relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
                 <SearchIcon size={14} className="md:w-4 md:h-4" />
