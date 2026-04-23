@@ -74,14 +74,14 @@ export const Dashboard: React.FC = () => {
 
 
       <div className="grid grid-cols-1 gap-10">
-        <section>
-          <div className="flex items-center justify-between mb-6">
+        <section className="max-w-4xl mx-auto w-full">
+          <div className="flex items-center justify-between mb-6 px-2">
             <h3 className="text-lg font-bold text-surface-900 flex items-center gap-3">
               <Clock className="w-5 h-5 text-brand-600" />
               Recently Added
             </h3>
           </div>
-          <div className="card overflow-hidden">
+          <div className="card overflow-hidden shadow-sm">
             <div className="hidden md:block">
               <table className="w-full text-left border-collapse">
                 <thead className="bg-surface-50 dark:bg-slate-700/50 text-xs font-bold text-surface-500 uppercase border-b border-surface-200 dark:border-slate-700">

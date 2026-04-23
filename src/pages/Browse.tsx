@@ -68,7 +68,7 @@ export const Browse: React.FC = () => {
   return (
     <div className="space-y-6">
 
-      <div className="card p-4 md:p-6 bg-white dark:bg-slate-800 flex flex-col md:flex-row flex-wrap gap-4 md:gap-8 items-start relative">
+      <div className="sticky top-20 z-30 card p-4 md:p-6 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm flex flex-col md:flex-row flex-wrap gap-4 md:gap-8 items-start">
         <ButtonGroup
           label="Exam"
           icon={Layers}

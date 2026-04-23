@@ -130,10 +130,15 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-60 flex flex-col min-h-screen w-full pb-16 lg:pb-0">
-        <header className="h-20 bg-white/80 backdrop-blur-lg border-b border-surface-200 flex items-center justify-between px-4 md:px-8 shrink-0 sticky top-0 z-40 shadow-sm">
-          <div className="flex items-center gap-4 md:gap-6 flex-1 max-w-2xl lg:ml-0">
-            <h1 className="lg:hidden text-2xl font-black text-slate-900 mr-2 shrink-0">CSE-C</h1>
-            <form onSubmit={handleSearch} className="flex-1 relative group">
+        <header className="h-20 bg-white/80 backdrop-blur-lg border-b border-surface-200 grid grid-cols-3 items-center px-4 md:px-8 shrink-0 sticky top-0 z-40 shadow-sm">
+          {/* Left: Brand (Mobile Only) */}
+          <div className="flex items-center">
+            <h1 className="lg:hidden text-2xl font-black text-slate-900 shrink-0">CSE-C</h1>
+          </div>
+
+          {/* Center: Search Bar */}
+          <div className="flex justify-center">
+            <form onSubmit={handleSearch} className="w-full max-w-xs md:max-w-md relative group">
               <div className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none text-surface-400 group-focus-within:text-brand-600 transition-colors">
                 <SearchIcon size={14} className="md:w-4 md:h-4" />
               </div>
@@ -141,14 +146,15 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search..." 
-                className="w-full bg-white border-2 border-surface-400 rounded-lg pl-10 md:pl-12 pr-4 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none placeholder:text-surface-400"
+                placeholder="Search resources..." 
+                className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-xl pl-10 md:pl-12 pr-4 py-2 text-sm focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none placeholder:text-slate-400"
               />
             </form>
           </div>
-          {/* Semester Indicator */}
-          <div className="flex items-center ml-4">
-            <span className="text-3xl md:text-4xl font-bold text-blue-600 tracking-tight">3-2</span>
+
+          {/* Right: Semester Indicator */}
+          <div className="flex justify-end items-center">
+            <span className="text-3xl md:text-4xl font-black text-blue-600 tracking-tighter italic">3-2</span>
           </div>
         </header>
 

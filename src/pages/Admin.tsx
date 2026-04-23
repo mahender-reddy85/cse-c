@@ -138,7 +138,7 @@ export const Admin: React.FC = () => {
         <p className="text-xs text-slate-500 font-medium">Manage repository contents and user interactions</p>
       </header>
 
-      <div className="flex flex-wrap gap-2 border-b border-slate-200">
+      <div className="flex overflow-x-auto no-scrollbar gap-2 border-b border-slate-200 -mx-4 px-4 md:mx-0 md:px-0">
         {[
           { id: 'upload', label: 'Upload New', icon: FileUp },
           { id: 'manage', label: 'Manage All', icon: List },
@@ -148,7 +148,7 @@ export const Admin: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all relative ${
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all relative whitespace-nowrap ${
               activeTab === tab.id 
               ? 'text-brand-600' 
               : 'text-slate-400 hover:text-slate-600'
@@ -174,7 +174,7 @@ export const Admin: React.FC = () => {
       )}
 
       {activeTab === 'upload' && (
-        <form onSubmit={handleUpload} className="card p-10 space-y-8 max-w-5xl mx-auto">
+        <form onSubmit={handleUpload} className="card p-6 md:p-10 space-y-8 max-w-5xl mx-auto">
           {/* Main Attributes Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex flex-col gap-1.5">
@@ -323,12 +323,12 @@ export const Admin: React.FC = () => {
       {activeTab === 'manage' && (
         <div className="card divide-y divide-slate-100">
           {documents.map(d => (
-            <div key={d.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
-              <div>
-                <p className="text-sm font-bold text-slate-800">{d.title}</p>
+            <div key={d.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-slate-50 transition-colors">
+              <div className="overflow-hidden">
+                <p className="text-sm font-bold text-slate-800 truncate">{d.title}</p>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{d.subject} • Unit {d.unit} • {d.exam}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 self-end sm:self-auto">
                 <button onClick={() => handleDeleteDoc(d.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete Resource">
                   <Trash2 size={16} />
                 </button>
@@ -342,18 +342,18 @@ export const Admin: React.FC = () => {
       {activeTab === 'requests' && (
         <div className="card divide-y divide-slate-100">
           {requests.map(r => (
-            <div key={r.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-bold text-slate-800">{r.title}</p>
+            <div key={r.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-slate-50 transition-colors">
+              <div className="overflow-hidden">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <p className="text-sm font-bold text-slate-800 truncate">{r.title}</p>
                   <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${r.status === 'fulfilled' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
                     {r.status}
                   </span>
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{r.subject} • Unit {r.unit} • Submitter: {r.requestedBy}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">{r.subject} • Unit {r.unit} • Submitter: {r.requestedBy}</p>
               </div>
               {r.status === 'pending' && (
-                <button onClick={() => handleFulfillRequest(r.id)} className="btn-secondary py-1 text-xs px-3">
+                <button onClick={() => handleFulfillRequest(r.id)} className="btn-secondary py-1.5 text-xs px-4 self-end sm:self-auto">
                   Check Fulfillment
                 </button>
               )}
@@ -366,24 +366,24 @@ export const Admin: React.FC = () => {
       {activeTab === 'submissions' && (
         <div className="card divide-y divide-slate-100">
           {submissions.map(s => (
-            <div key={s.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-bold text-slate-800">{s.title}</p>
+            <div key={s.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 gap-4 hover:bg-slate-50 transition-colors">
+              <div className="flex-1 overflow-hidden">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <p className="text-sm font-bold text-slate-800 truncate">{s.title}</p>
                   <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${s.status === 'approved' ? 'bg-green-50 text-green-600' : s.status === 'rejected' ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-600'}`}>
                     {s.status}
                   </span>
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{s.subject} • Unit {s.unit} • Contributor: {s.submittedBy}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">{s.subject} • Unit {s.unit} • Contributor: {s.submittedBy}</p>
                 <a href={s.fileUrl} target="_blank" className="text-[10px] font-bold text-brand-600 hover:underline mt-1 inline-block">PREVIEW_ASSET</a>
               </div>
               {s.status === 'pending' && (
-                <div className="flex gap-2">
-                  <button onClick={() => handleApproveSubmission(s)} className="p-2 border border-green-200 text-green-600 hover:bg-green-50 rounded-lg transition-all" title="Approve">
-                    <Check size={18} />
+                <div className="flex gap-2 self-end md:self-auto">
+                  <button onClick={() => handleApproveSubmission(s)} className="flex items-center gap-2 px-3 py-2 border border-green-200 text-green-600 hover:bg-green-50 rounded-lg transition-all text-xs font-bold" title="Approve">
+                    <Check size={16} /> <span>APPROVE</span>
                   </button>
-                  <button onClick={() => updateDoc(doc(db, 'submissions', s.id), { status: 'rejected' })} className="p-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Reject">
-                    <X size={18} />
+                  <button onClick={() => updateDoc(doc(db, 'submissions', s.id), { status: 'rejected' })} className="flex items-center gap-2 px-3 py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg transition-all text-xs font-bold" title="Reject">
+                    <X size={16} /> <span>REJECT</span>
                   </button>
                 </div>
               )}
