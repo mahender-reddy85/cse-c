@@ -14,26 +14,23 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
     window.open(docData.fileUrl, '_blank');
   };
 
-  const handleDownload = async (e: React.MouseEvent) => {
+  const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const response = await fetch(docData.fileUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      // Force download using Cloudinary's fl_attachment flag
+      // We insert 'fl_attachment/' right after '/upload/' in the URL
+      const downloadUrl = docData.fileUrl.replace('/upload/', '/upload/fl_attachment/');
+      
       const link = document.createElement('a');
-      link.href = url;
-      
-      // Extract filename or use title
-      const extension = docData.fileType === 'pdf' ? '.pdf' : '.jpg';
-      link.setAttribute('download', `${docData.title}${extension}`);
-      
+      link.href = downloadUrl;
+      link.target = '_blank';
+      // Note: download attribute only works for same-origin or with specific headers, 
+      // but fl_attachment on Cloudinary side handles the Content-Disposition header.
       document.body.appendChild(link);
       link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
     } catch (error) {
-      console.error("Download failed:", error);
-      // Fallback: open in new tab
+      console.error("Download redirection failed:", error);
       window.open(docData.fileUrl, '_blank');
     }
   };
@@ -45,6 +42,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
       whileHover={{ y: -4, shadow: "lg" }}
       className="card group relative flex flex-col h-full bg-white transition-all overflow-hidden hover:shadow-xl"
     >
+      <div className="p-6 flex-1 space-y-4">
         <div className="flex items-start justify-between">
           <div className="space-y-3 flex-1">
             <div className="flex flex-wrap gap-2">
