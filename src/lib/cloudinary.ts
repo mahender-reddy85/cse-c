@@ -2,8 +2,10 @@ export const uploadToCloudinary = async (file: File) => {
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
+  console.log('Cloudinary Config:', { cloudName, uploadPreset });
+
   if (!cloudName || !uploadPreset) {
-    throw new Error('Cloudinary configuration missing. Please check your .env file.');
+    throw new Error(`Cloudinary configuration missing. (Cloud: ${cloudName || 'MISSING'}, Preset: ${uploadPreset || 'MISSING'}). Please restart your dev server.`);
   }
 
   const formData = new FormData();
