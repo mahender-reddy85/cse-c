@@ -4,7 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Shell } from './components/layout/Shell';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
-import { Browse } from './pages/Browse';
+
 import { Search } from './pages/Search';
 import { Requests } from './pages/Requests';
 import { Admin } from './pages/Admin';
@@ -24,13 +24,7 @@ export default function App() {
             </ProtectedRoute>
           } />
 
-          <Route path="/browse" element={
-            <ProtectedRoute>
-              <Shell>
-                <Browse />
-              </Shell>
-            </ProtectedRoute>
-          } />
+
 
           <Route path="/search" element={
             <ProtectedRoute>

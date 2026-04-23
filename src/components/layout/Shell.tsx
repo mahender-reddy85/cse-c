@@ -50,9 +50,6 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         <NavLink to="/" className={({ isActive }) => `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110 shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'}`}>
           <LayoutDashboard size={22} />
         </NavLink>
-        <NavLink to="/browse" className={({ isActive }) => `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110 shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'}`}>
-          <Compass size={22} />
-        </NavLink>
         {!isAdmin && (
           <NavLink to="/requests" className={({ isActive }) => `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110 shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'}`}>
             <Clock size={22} />
@@ -74,18 +71,9 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
           <nav className="space-y-2">
             <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
-            <NavItem to="/browse" icon={Compass} label="Explorer" />
             {!isAdmin && <NavItem to="/requests" icon={Clock} label="My Activity" />}
+            {isAdmin && <NavItem to="/admin" icon={ShieldAlert} label="Admin Panel" />}
           </nav>
-
-          {isAdmin && (
-            <div className="mt-8 pt-6 border-t border-slate-200">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2">
-                Admin Controls
-              </p>
-              <NavItem to="/admin" icon={ShieldAlert} label="Admin Panel" />
-            </div>
-          )}
         </div>
 
         <div className="mt-auto p-4 border-t border-surface-200">
