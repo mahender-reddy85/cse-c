@@ -4,29 +4,25 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Document } from '../types';
 import { DocumentCard } from '../components/DocumentCard';
-import { Search as SearchIcon, Terminal, X } from 'lucide-react';
+import { Search as SearchIcon } from 'lucide-react';
 
 export const Search: React.FC = () => {
   const location = useLocation();
   const [allDocs, setAllDocs] = useState<Document[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredDocs, setFilteredDocs] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // Sync with URL query param
+  // Sync with URL query param from header search
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const q = params.get('q');
-    if (q) {
-      setSearchTerm(q);
-    }
+    setSearchTerm(q || '');
   }, [location.search]);
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'documents'), (snap) => {
       const docs = snap.docs.map(d => ({ id: d.id, ...d.data() } as Document));
       setAllDocs(docs);
-      setLoading(false);
     });
     return unsub;
   }, []);
@@ -50,31 +46,12 @@ export const Search: React.FC = () => {
     <div className="space-y-8">
       <header>
         <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-          Global Search
+          Search Results
         </h1>
-        <p className="text-xs text-slate-500 font-medium">Search the repository by title, subject, or keywords</p>
+        <p className="text-xs text-slate-500 font-medium italic">
+          Showing results for "{searchTerm || '...'}"
+        </p>
       </header>
-
-      <div className="relative group">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
-          <SearchIcon size={20} />
-        </div>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search for documents, subjects, or tags..."
-          className="input-field pl-12 py-4 text-base shadow-sm"
-        />
-        {searchTerm && (
-          <button 
-            onClick={() => setSearchTerm('')}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
-          >
-            <X size={20} />
-          </button>
-        )}
-      </div>
 
       <div>
         {searchTerm ? (
@@ -97,7 +74,7 @@ export const Search: React.FC = () => {
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No results found</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xs mx-auto">
-                  We couldn't find any documents matching "{searchTerm}".
+                  We couldn't find any documents matching your query.
                 </p>
               </div>
             )}
@@ -106,7 +83,7 @@ export const Search: React.FC = () => {
           <div className="flex flex-col items-center justify-center py-40 opacity-30 select-none">
             <SearchIcon size={64} className="mb-6 text-slate-300 dark:text-slate-700" />
             <p className="font-bold text-xs uppercase tracking-[0.2em] text-slate-400">
-              Enter keywords to search
+              Use the header search bar to find resources
             </p>
           </div>
         )}

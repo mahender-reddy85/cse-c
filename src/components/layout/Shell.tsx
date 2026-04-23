@@ -3,13 +3,14 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Compass, ShieldAlert, LogOut, LogIn, Search as SearchIcon, Clock } from 'lucide-react';
 import { auth } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, profile, isAdmin, isGuest } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   // Live Search: Navigate to search page as user types
   useEffect(() => {
@@ -147,9 +148,47 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             </form>
           </div>
 
-          {/* Right: Semester Indicator */}
-          <div className="flex justify-end items-center">
-            <span className="text-3xl md:text-4xl font-black text-blue-600 tracking-tighter italic">3-2</span>
+          {/* Right: Semester Indicator & User Avatar (Mobile) */}
+          <div className="flex justify-end items-center gap-3">
+            <span className="text-3xl md:text-4xl font-black text-blue-600 tracking-tighter italic mr-2 md:mr-0">3-2</span>
+            
+            {/* Mobile-only Avatar Dropdown */}
+            {!isGuest && (
+              <div className="lg:hidden relative">
+                <button 
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-md active:scale-95 transition-transform"
+                >
+                  {user?.email?.substring(0, 1).toUpperCase() || 'U'}
+                </button>
+
+                <AnimatePresence>
+                  {showUserMenu && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                        className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-50 origin-top-right"
+                      >
+                        <div className="p-3 border-b border-slate-50 mb-1">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Account</p>
+                          <p className="text-xs font-semibold text-slate-900 truncate">{user?.email}</p>
+                        </div>
+                        <button
+                          onClick={() => { handleLogout(); setShowUserMenu(false); }}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                        >
+                          <LogOut size={16} />
+                          <span>SIGN OUT</span>
+                        </button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         </header>
 
