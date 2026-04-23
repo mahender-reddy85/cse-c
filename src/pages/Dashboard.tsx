@@ -90,7 +90,6 @@ export const Dashboard: React.FC = () => {
           <p className="text-xs font-bold text-surface-500 uppercase mb-2 tracking-wider">Active Resources</p>
           <div className="flex items-baseline gap-2">
             <p className="text-3xl font-bold text-surface-900">{recentDocs.length + importantDocs.length}</p>
-            {!isAdmin && <span className="text-sm text-success font-semibold">+4 this week</span>}
           </div>
         </div>
         <div className="card p-6 hover:shadow-lg transition-shadow duration-200">

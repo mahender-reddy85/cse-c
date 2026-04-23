@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
+import { uploadToCloudinary } from '../lib/cloudinary';
 import { useAuth } from '../context/AuthContext';
 import { RequestDoc, Submission } from '../types';
 import { Send, Upload, CheckCircle2, XCircle, FilePlus, MessageCirclePlus, Check } from 'lucide-react';
@@ -91,9 +91,7 @@ export const Requests: React.FC = () => {
     setLoading(true);
     try {
       const userEmail = user.email || profile.email;
-      const fileRef = ref(storage, `submissions/${Date.now()}_${subFile.name}`);
-      await uploadBytes(fileRef, subFile);
-      const fileUrl = await getDownloadURL(fileRef);
+      const fileUrl = await uploadToCloudinary(subFile);
 
       await addDoc(collection(db, 'submissions'), {
         title: subTitle,

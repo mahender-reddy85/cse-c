@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, serverTimestamp, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
+import { uploadToCloudinary } from '../lib/cloudinary';
 import { useAuth } from '../context/AuthContext';
 import { Document, RequestDoc, Submission } from '../types';
 import { Plus, Trash2, Edit2, Check, X, Inbox, FileUp, List, MessageSquare, ClipboardCheck } from 'lucide-react';
@@ -57,9 +57,7 @@ export const Admin: React.FC = () => {
 
     setLoading(true);
     try {
-      const fileRef = ref(storage, `documents/${Date.now()}_${file.name}`);
-      await uploadBytes(fileRef, file);
-      const fileUrl = await getDownloadURL(fileRef);
+      const fileUrl = await uploadToCloudinary(file);
       
       const fileType = file.type.includes('pdf') ? 'pdf' : 'image';
 
