@@ -22,12 +22,15 @@ export const Dashboard: React.FC = () => {
   const [unit, setUnit] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Live Search logic for mobile search bar
+  // Live Search logic for mobile search bar (Debounced)
   useEffect(() => {
-    if (searchTerm.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchTerm)}`, { replace: true });
-    }
-  }, [searchTerm]);
+    const handler = setTimeout(() => {
+      if (searchTerm.trim()) {
+        navigate(`/search?q=${encodeURIComponent(searchTerm)}`, { replace: true });
+      }
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchTerm, navigate]);
 
   const fetchDocs = async () => {
     if (authLoading || !profile) return;
@@ -110,16 +113,18 @@ export const Dashboard: React.FC = () => {
         <ButtonGroup label="Exam" icon={Layers} value={exam} options={EXAMS} onChange={setExam} />
         <ButtonGroup label="Subject" icon={Book} value={subject} options={SUBJECTS} onChange={setSubject} />
         <ButtonGroup label="Unit" icon={Hash} value={unit} options={UNITS} onChange={setUnit} />
+
+        <div className="w-full pt-4 border-t border-slate-100 dark:border-slate-800 mt-2 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+            <Layers className="w-4 h-4 text-blue-600" />
+            Resources
+          </h3>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{docs.length} Items Found</span>
+        </div>
       </div>
 
       {/* 2. Resources Grid */}
       <section>
-        <div className="flex items-center justify-between mb-6 px-2">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center gap-3">
-            <Layers className="w-5 h-5 text-blue-600" />
-            Resources
-          </h3>
-        </div>
         {docs.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {docs.map(doc => (

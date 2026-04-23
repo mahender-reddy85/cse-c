@@ -12,14 +12,22 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // Live Search: Navigate to search page as user types, return to dashboard on clear
+  // Live Search: Debounced navigation to prevent "shaking/flickering"
   useEffect(() => {
-    if (searchTerm.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchTerm)}`, { replace: true });
-    } else if (location.pathname === '/search') {
-      navigate('/', { replace: true });
-    }
-  }, [searchTerm, location.pathname]);
+    const handler = setTimeout(() => {
+      if (searchTerm.trim()) {
+        // Only navigate if the current search in URL is different to avoid redundant re-renders
+        const params = new URLSearchParams(location.search);
+        if (params.get('q') !== searchTerm) {
+          navigate(`/search?q=${encodeURIComponent(searchTerm)}`, { replace: true });
+        }
+      } else if (location.pathname === '/search') {
+        navigate('/', { replace: true });
+      }
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(handler);
+  }, [searchTerm, location.pathname, navigate]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +134,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-60 flex flex-col min-h-screen w-full pb-16 lg:pb-0">
-        <header className="h-20 bg-white/80 backdrop-blur-lg border-b border-slate-200 grid grid-cols-3 items-center px-4 md:px-8 shrink-0 sticky top-0 z-40 shadow-sm">
+        <header className="h-20 bg-white/80 backdrop-blur-lg border-b border-slate-200 flex lg:grid lg:grid-cols-3 justify-between items-center px-4 md:px-8 shrink-0 sticky top-0 z-40 shadow-sm">
           {/* Left: Brand (Mobile Only) */}
           <div className="flex items-center">
             <h1 className="lg:hidden text-2xl font-black text-slate-900 shrink-0">CSE-C</h1>
