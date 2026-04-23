@@ -101,7 +101,7 @@ export const Login: React.FC = () => {
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
-        style={{ backgroundImage: "url('/bg.jpg')" }}
+        style={{ backgroundImage: "url('/cse-c.png')" }}
       />
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
 
