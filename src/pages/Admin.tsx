@@ -325,9 +325,9 @@ export const Admin: React.FC = () => {
               <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                 <tr>
                   <th className="px-6 py-4">Title</th>
+                  <th className="px-6 py-4">Exam</th>
                   <th className="px-6 py-4">Subject</th>
                   <th className="px-6 py-4">Unit</th>
-                  <th className="px-6 py-4">Exam</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -337,9 +337,9 @@ export const Admin: React.FC = () => {
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate max-w-[200px]">{d.title}</p>
                     </td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.exam}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.subject}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.unit}</td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.exam}</td>
                     <td className="px-6 py-4 text-right">
                       <button onClick={() => handleDeleteDoc(d.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete">
                         <Trash2 size={16} />

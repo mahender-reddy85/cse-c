@@ -44,42 +44,37 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
     >
       <div className="p-6 flex-1 space-y-4">
         <div className="flex items-start justify-between">
-          <div className="space-y-3 flex-1">
-            <div className="flex flex-wrap gap-2">
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter border ${docData.exam?.toLowerCase().includes('mid') ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-purple-50 text-purple-700 border-purple-200'}`}>
+          <div className="flex-1 space-y-3">
+            <div className="space-y-1">
+              <span className="inline-block text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-tighter mb-1">
                 {docData.exam}
               </span>
-              <span className="text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter bg-slate-100 text-slate-700 border border-slate-200">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
                 {docData.subject}
-              </span>
-              {docData.isImportant && (
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter bg-orange-500 text-white border border-orange-600">CRITICAL</span>
-              )}
+              </p>
+              <h3 className="text-xl font-black text-slate-900 leading-tight">
+                {docData.title}
+              </h3>
             </div>
-            
-            <h3 className="text-lg font-black text-slate-900 leading-tight group-hover:text-brand-600 transition-colors">
-              {docData.title}
-            </h3>
 
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
-                <Hash size={12} className="text-brand-600" />
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                <Hash size={10} className="text-slate-300" />
                 UNIT {docData.unit}
-              </span>
-            </div>
+              </p>
 
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {docData.tags?.map(tag => (
-                <span key={tag} className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter hover:text-brand-500 transition-colors cursor-default">
-                  #{tag}
-                </span>
-              ))}
-              {/* If no tags, show uploader as a fallback tag style */}
-              {!docData.tags?.length && docData.uploadedBy && (
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                  #{docData.uploadedBy.split('@')[0]}
-                </span>
-              )}
+              <div className="flex flex-wrap gap-1.5">
+                {docData.tags?.map(tag => (
+                  <span key={tag} className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                    #{tag}
+                  </span>
+                ))}
+                {!docData.tags?.length && docData.uploadedBy && (
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                    #{docData.uploadedBy.split('@')[0]}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           <div className="p-3 bg-slate-50 rounded-2xl text-slate-400 group-hover:text-brand-600 group-hover:bg-brand-50 transition-all duration-300 ml-3 shrink-0 border border-slate-100">

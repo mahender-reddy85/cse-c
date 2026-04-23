@@ -56,9 +56,9 @@ export const Dashboard: React.FC = () => {
               <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                 <tr>
                   <th className="px-6 py-4">Title</th>
+                  <th className="px-6 py-4">Exam</th>
                   <th className="px-6 py-4">Subject</th>
                   <th className="px-6 py-4">Unit</th>
-                  <th className="px-6 py-4">Exam</th>
                   <th className="px-6 py-4 text-right">Action</th>
                 </tr>
               </thead>
@@ -72,9 +72,9 @@ export const Dashboard: React.FC = () => {
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors truncate max-w-[200px]">{doc.title}</p>
                     </td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{doc.exam}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{doc.subject}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{doc.unit}</td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{doc.exam}</td>
                     <td className="px-6 py-4 text-right">
                       <span className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">OPEN</span>
                     </td>
