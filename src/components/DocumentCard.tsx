@@ -4,25 +4,14 @@ import { motion } from 'motion/react';
 import { Document } from '../types';
 import { db } from '../lib/firebase';
 import { doc, updateDoc, increment } from 'firebase/firestore';
-import { PDFPreview } from './PDFPreview';
 
 interface DocumentCardProps {
   doc: Document;
 }
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
-  const [isPreviewOpen, setIsPreviewOpen] = React.useState(false);
-
-  const handleView = async () => {
-    try {
-      await updateDoc(doc(db, 'documents', docData.id), {
-        views: increment(1)
-      });
-      setIsPreviewOpen(true);
-    } catch (error) {
-      console.error("Error updating views:", error);
-      setIsPreviewOpen(true);
-    }
+  const handleView = () => {
+    window.open(docData.fileUrl, '_blank');
   };
 
   const handleDownload = async (e: React.MouseEvent) => {
@@ -42,11 +31,6 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
       link.click();
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
-      // Also track as a view/download engagement
-      await updateDoc(doc(db, 'documents', docData.id), {
-        views: increment(1)
-      });
     } catch (error) {
       console.error("Download failed:", error);
       // Fallback: open in new tab
@@ -122,12 +106,6 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
           Download
         </button>
       </div>
-      <PDFPreview 
-        isOpen={isPreviewOpen} 
-        onClose={() => setIsPreviewOpen(false)} 
-        fileUrl={docData.fileUrl} 
-        title={docData.title} 
-      />
     </motion.div>
   );
 };

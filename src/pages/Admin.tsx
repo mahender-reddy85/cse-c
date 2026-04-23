@@ -81,7 +81,6 @@ export const Admin: React.FC = () => {
         fileType,
         uploadedBy: user.email,
         createdAt: serverTimestamp(),
-        views: 0,
         isImportant
       });
 
@@ -110,7 +109,6 @@ export const Admin: React.FC = () => {
         fileType: sub.fileUrl.includes('.pdf') ? 'pdf' : 'image',
         uploadedBy: sub.submittedBy,
         createdAt: serverTimestamp(),
-        views: 0,
         isImportant: false
       });
       setStatus({ type: 'success', text: 'SUBMISSION_APPROVED_AND_MOVED_TO_DOCS' });
@@ -321,21 +319,44 @@ export const Admin: React.FC = () => {
       </AnimatePresence>
 
       {activeTab === 'manage' && (
-        <div className="card divide-y divide-slate-100">
-          {documents.map(d => (
-            <div key={d.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-slate-50 transition-colors">
-              <div className="overflow-hidden">
-                <p className="text-sm font-bold text-slate-800 truncate">{d.title}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{d.subject} • Unit {d.unit} • {d.exam}</p>
-              </div>
-              <div className="flex gap-2 self-end sm:self-auto">
-                <button onClick={() => handleDeleteDoc(d.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete Resource">
-                  <Trash2 size={16} />
-                </button>
-              </div>
+        <div className="card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-slate-50 dark:bg-slate-700/50 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th className="px-6 py-4">Resource Title</th>
+                  <th className="px-6 py-4">Metadata (Subject • Unit • Exam)</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                {documents.map(d => (
+                  <tr key={d.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-6 py-4">
+                      <p className="text-sm font-bold text-slate-800 group-hover:text-brand-600 transition-colors truncate max-w-[250px]">{d.title}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight">{d.subject} • Unit {d.unit} • {d.exam}</p>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button 
+                        onClick={() => handleDeleteDoc(d.id)} 
+                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" 
+                        title="Delete Resource"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {documents.length === 0 && (
+            <div className="p-12 text-center text-slate-400 italic text-sm bg-slate-50/30">
+              No resources available in repository
             </div>
-          ))}
-          {documents.length === 0 && <div className="p-12 text-center text-slate-400 italic text-sm">No resources available in repository</div>}
+          )}
         </div>
       )}
 

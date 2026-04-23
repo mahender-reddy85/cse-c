@@ -18,7 +18,6 @@ export interface Document {
   fileType: 'pdf' | 'image';
   uploadedBy: string;
   createdAt: any;
-  views: number;
   isImportant: boolean;
 }
 

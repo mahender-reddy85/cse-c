@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { doc, updateDoc, increment, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { Document } from '../types';
 import { DocumentCard } from '../components/DocumentCard';
 import { Flame, Clock, TrendingUp, AlertTriangle } from 'lucide-react';
 import { motion } from 'motion/react';
-import { PDFPreview } from '../components/PDFPreview';
 
 export const Dashboard: React.FC = () => {
   const { profile, loading: authLoading, isAdmin } = useAuth();
   const [recentDocs, setRecentDocs] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,16 +39,8 @@ export const Dashboard: React.FC = () => {
     fetchData();
   }, [authLoading, profile]);
 
-  const handleRowClick = async (docData: Document) => {
-    try {
-      setSelectedDoc(docData);
-      setIsPreviewOpen(true);
-      await updateDoc(doc(db, 'documents', docData.id), {
-        views: increment(1)
-      });
-    } catch (error) {
-      console.error("Error updating views:", error);
-    }
+  const handleRowClick = (docData: Document) => {
+    window.open(docData.fileUrl, '_blank');
   };
 
   if (loading) {
@@ -88,7 +77,7 @@ export const Dashboard: React.FC = () => {
                   <tr>
                     <th className="px-6 py-4">Title</th>
                     <th className="px-6 py-4">Subject</th>
-                    <th className="px-6 py-4 text-right">Views</th>
+                    <th className="px-6 py-4 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
@@ -100,7 +89,9 @@ export const Dashboard: React.FC = () => {
                     >
                       <td className="px-6 py-4 font-semibold text-surface-800 dark:text-slate-200 truncate max-w-[200px] group-hover:text-brand-600 transition-colors">{doc.title}</td>
                       <td className="px-6 py-4 text-surface-600 dark:text-slate-400">{doc.subject}</td>
-                      <td className="px-6 py-4 font-mono text-surface-500 dark:text-slate-500 text-right">{doc.views}</td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-md">OPEN</span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -119,8 +110,7 @@ export const Dashboard: React.FC = () => {
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">{doc.subject}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-bold text-brand-600">{doc.views}</p>
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Views</p>
+                    <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-md">OPEN</span>
                   </div>
                 </div>
               ))}
@@ -128,14 +118,6 @@ export const Dashboard: React.FC = () => {
           </div>
         </section>
       </div>
-      {selectedDoc && (
-        <PDFPreview 
-          isOpen={isPreviewOpen} 
-          onClose={() => setIsPreviewOpen(false)} 
-          fileUrl={selectedDoc.fileUrl} 
-          title={selectedDoc.title} 
-        />
-      )}
     </div>
   );
 };

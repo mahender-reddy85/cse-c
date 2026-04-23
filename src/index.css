@@ -29,77 +29,17 @@
 
 @layer base {
   html {
-    transition: background-color 0.5s ease, color 0.5s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   
   body {
-    @apply bg-surface-50 text-surface-900 font-sans antialiased transition-all duration-500;
+    @apply bg-surface-50 text-surface-900 font-sans antialiased transition-all duration-300;
   }
 }
 
-.dark {
-  @apply bg-surface-900 text-surface-100;
-}
-
-.dark body {
-  @apply bg-surface-900 text-surface-100;
-}
-
-.dark .bg-gradient-to-br {
-  @apply from-surface-900 via-surface-800 to-surface-900;
-}
-
-.dark .bg-white {
-  @apply bg-surface-800;
-}
-
-.dark .text-surface-900 {
-  @apply text-surface-100;
-}
-
-.dark .text-surface-700 {
-  @apply text-surface-300;
-}
-
-.dark .text-surface-600 {
-  @apply text-surface-400;
-}
-
-.dark .text-surface-500 {
-  @apply text-surface-500;
-}
-
-.dark .border-surface-200 {
-  @apply border-surface-600;
-}
-
-.dark .border-surface-300 {
-  @apply border-surface-700;
-}
-
-.dark .bg-surface-50 {
-  @apply bg-surface-800;
-}
-
-.dark .bg-surface-100 {
-  @apply bg-surface-700;
-}
-
-.dark .shadow-sm {
-  @apply shadow-lg;
-}
-
-/* Beautiful dark theme overrides */
-.dark .nav-link-active {
-  @apply bg-slate-800 text-cyan-400 border-cyan-400;
-}
-
-.dark .nav-link-inactive {
-  @apply text-slate-400 hover:text-slate-200 hover:bg-slate-800;
-}
-
-.dark .app-sidebar {
-  @apply bg-slate-900 border-slate-700;
+/* Unified Dark Theme */
+.dark, .dark body {
+  @apply bg-slate-900 text-slate-100;
 }
 
 .dark .bg-white {
@@ -138,64 +78,29 @@
   @apply border-slate-600;
 }
 
-.dark .bg-gradient-to-br {
-  @apply from-slate-900 via-slate-800 to-slate-900;
-}
-
-.dark .btn-secondary {
-  @apply bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600 hover:border-slate-500;
+.dark .card {
+  @apply bg-slate-800 border-slate-700 shadow-lg shadow-black/20;
 }
 
 .dark .input-field {
-  @apply bg-slate-700 border-slate-600 text-slate-200 placeholder:text-slate-400;
+  @apply bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500;
 }
 
-.dark .badge-blue { 
-  @apply bg-slate-700 text-cyan-400; 
+.dark .btn-secondary {
+  @apply bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700;
 }
 
-.dark .badge-orange { 
-  @apply bg-slate-700 text-orange-400; 
-}
-
-.dark .badge-green { 
-  @apply bg-slate-700 text-green-400; 
-}
-
-/* Additional dark theme improvements */
-.dark {
-  background-color: #0f172a;
-  color: #f1f5f9;
-}
-
-.dark body {
-  background-color: #0f172a;
-  color: #f1f5f9;
+.dark .bg-gradient-to-br {
+  @apply from-slate-900 via-slate-800 to-slate-950;
 }
 
 .dark header {
   @apply bg-slate-800/90 border-slate-700;
 }
 
-.dark .card {
-  @apply bg-slate-800 border-slate-700;
-}
-
-.dark .shadow-sm {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-}
-
-.dark .shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-}
-
-.dark .shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-}
-
 @layer components {
   .app-sidebar {
-    @apply w-60 bg-white dark:bg-surface-800 border-r border-surface-200 dark:border-surface-600 flex flex-col fixed inset-y-0 z-50 shadow-sm transform -translate-x-full lg:translate-x-0 transition-transform duration-300;
+    @apply w-60 bg-white dark:bg-slate-800 border-r border-surface-200 dark:border-slate-700 flex flex-col fixed inset-y-0 z-50 shadow-sm transform -translate-x-full lg:translate-x-0 transition-transform duration-300;
   }
 
   .nav-link {
@@ -203,27 +108,19 @@
   }
 
   .nav-link-active {
-    @apply bg-brand-50 text-brand-700 border-l-4 border-brand-600;
-  }
-
-  .nav-link-active {
-    @apply bg-brand-50 text-brand-700 border-l-4 border-brand-600;
+    @apply bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 border-l-4 border-brand-600;
   }
 
   .nav-link-inactive {
-    @apply text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700 hover:text-surface-800 dark:hover:text-surface-200;
+    @apply text-surface-600 dark:text-slate-400 hover:bg-surface-100 dark:hover:bg-slate-700/50 hover:text-surface-800 dark:hover:text-slate-200;
   }
 
   .card {
-    @apply bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-600 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200;
+    @apply bg-white dark:bg-slate-800 border border-surface-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand-600 text-white rounded-xl font-medium text-sm hover:bg-brand-700 hover:shadow-lg transition-all duration-200 transform hover:scale-105;
-  }
-
-  .dark .btn-primary {
-    @apply bg-brand-500 hover:bg-brand-600;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand-600 text-white rounded-xl font-medium text-sm hover:bg-brand-700 hover:shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100;
   }
 
   .btn-secondary {
@@ -231,15 +128,24 @@
   }
 
   .input-field {
-    @apply w-full bg-white border border-surface-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-200;
+    @apply w-full bg-white border border-surface-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-200;
   }
   
   .badge {
     @apply px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
   }
   
-  .badge-blue { @apply bg-brand-100 text-brand-700; }
-  .badge-orange { @apply bg-orange-100 text-orange-700; }
-  .badge-green { @apply bg-green-100 text-green-700; }
-  .badge-slate { @apply bg-surface-100 text-surface-700; }
+  .badge-blue { @apply bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-400; }
+  .badge-orange { @apply bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400; }
+  .badge-green { @apply bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400; }
+  .badge-slate { @apply bg-surface-100 text-surface-700 dark:bg-slate-700 dark:text-slate-300; }
+}
+
+/* Custom Scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
