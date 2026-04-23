@@ -321,29 +321,27 @@ export const Admin: React.FC = () => {
       {activeTab === 'manage' && (
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-slate-50 dark:bg-slate-700/50 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
+            <table className="w-full text-left border-collapse min-w-[600px]">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-4">Resource Title</th>
-                  <th className="px-6 py-4">Metadata (Subject • Unit • Exam)</th>
+                  <th className="px-6 py-4">Title</th>
+                  <th className="px-6 py-4">Subject</th>
+                  <th className="px-6 py-4">Unit</th>
+                  <th className="px-6 py-4">Exam</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
                 {documents.map(d => (
-                  <tr key={d.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={d.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                     <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-brand-600 transition-colors truncate max-w-[250px]">{d.title}</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate max-w-[200px]">{d.title}</p>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight">{d.subject} • Unit {d.unit} • {d.exam}</p>
-                    </td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.subject}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.unit}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.exam}</td>
                     <td className="px-6 py-4 text-right">
-                      <button 
-                        onClick={() => handleDeleteDoc(d.id)} 
-                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" 
-                        title="Delete Resource"
-                      >
+                      <button onClick={() => handleDeleteDoc(d.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete">
                         <Trash2 size={16} />
                       </button>
                     </td>
@@ -352,34 +350,44 @@ export const Admin: React.FC = () => {
               </tbody>
             </table>
           </div>
-          {documents.length === 0 && (
-            <div className="p-12 text-center text-slate-400 italic text-sm bg-slate-50/30">
-              No resources available in repository
-            </div>
-          )}
+          {documents.length === 0 && <div className="p-12 text-center text-slate-400 italic text-sm">No resources available</div>}
         </div>
       )}
 
       {activeTab === 'requests' && (
-        <div className="card divide-y divide-slate-100">
-          {requests.map(r => (
-            <div key={r.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-slate-50 transition-colors">
-              <div className="overflow-hidden">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <p className="text-sm font-bold text-slate-800 truncate">{r.title}</p>
-                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${r.status === 'fulfilled' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
-                    {r.status}
-                  </span>
-                </div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">{r.subject} • Unit {r.unit} • Submitter: {r.requestedBy}</p>
-              </div>
-              {r.status === 'pending' && (
-                <button onClick={() => handleFulfillRequest(r.id)} className="btn-secondary py-1.5 text-xs px-4 self-end sm:self-auto">
-                  Check Fulfillment
-                </button>
-              )}
-            </div>
-          ))}
+        <div className="card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[600px]">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="px-6 py-4">Requested Resource</th>
+                  <th className="px-6 py-4">Subject</th>
+                  <th className="px-6 py-4">Unit</th>
+                  <th className="px-6 py-4">Submitter</th>
+                  <th className="px-6 py-4 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                {requests.map(r => (
+                  <tr key={r.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{r.title}</p>
+                    </td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.subject}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.unit}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.requestedBy.split('@')[0]}</td>
+                    <td className="px-6 py-4 text-right">
+                      {r.status === 'pending' ? (
+                        <button onClick={() => handleFulfillRequest(r.id)} className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">PENDING</button>
+                      ) : (
+                        <span className="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">FULFILLED</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {requests.length === 0 && <div className="p-12 text-center text-slate-400 italic text-sm">No active user requests</div>}
         </div>
       )}

@@ -3,39 +3,26 @@ import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { Document } from '../types';
-import { DocumentCard } from '../components/DocumentCard';
-import { Flame, Clock, TrendingUp, AlertTriangle } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Clock } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { profile, loading: authLoading, isAdmin } = useAuth();
+  const { profile, loading: authLoading } = useAuth();
   const [recentDocs, setRecentDocs] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      // Wait for auth to be ready and profile to exist before fetching
       if (authLoading || !profile) return;
-      
       try {
-        const docsRef = collection(db, 'documents');
-
-
-
-        // Fetch Recent
-        const qRecent = query(docsRef, orderBy('createdAt', 'desc'), limit(4));
+        const qRecent = query(collection(db, 'documents'), orderBy('createdAt', 'desc'), limit(5));
         const snapRecent = await getDocs(qRecent);
         setRecentDocs(snapRecent.docs.map(d => ({ id: d.id, ...d.data() } as Document)));
-
-
-
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [authLoading, profile]);
 
@@ -46,78 +33,71 @@ export const Dashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col gap-8 animate-pulse">
-        <div className="h-40 bg-surface-100 rounded-2xl"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1,2,3,4].map(i => <div key={i} className="h-56 bg-surface-100 rounded-2xl"></div>)}
+        <div className="h-40 bg-slate-100 rounded-xl"></div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-slate-100 rounded-xl"></div>)}
         </div>
       </div>
     );
   }
 
-
-
   return (
     <div className="space-y-12">
-
-
-
-
-      <div className="grid grid-cols-1 gap-10">
-        <section className="max-w-4xl mx-auto w-full">
-          <div className="flex items-center justify-between mb-6 px-2">
-            <h3 className="text-lg font-bold text-surface-900 flex items-center gap-3">
-              <Clock className="w-5 h-5 text-brand-600" />
-              Recently Added
-            </h3>
-          </div>
-          <div className="card overflow-hidden shadow-sm">
-            <div className="hidden md:block">
-              <table className="w-full text-left border-collapse">
-                <thead className="bg-surface-50 dark:bg-slate-700/50 text-xs font-bold text-surface-500 uppercase border-b border-surface-200 dark:border-slate-700">
-                  <tr>
-                    <th className="px-6 py-4">Title</th>
-                    <th className="px-6 py-4">Subject</th>
-                    <th className="px-6 py-4 text-right">Action</th>
+      <section className="max-w-5xl mx-auto w-full">
+        <div className="flex items-center justify-between mb-6 px-2">
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+            <Clock className="w-5 h-5 text-blue-600" />
+            Recently Added
+          </h3>
+        </div>
+        <div className="card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[600px]">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="px-6 py-4">Title</th>
+                  <th className="px-6 py-4">Subject</th>
+                  <th className="px-6 py-4">Unit</th>
+                  <th className="px-6 py-4">Exam</th>
+                  <th className="px-6 py-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                {recentDocs.map(doc => (
+                  <tr 
+                    key={doc.id} 
+                    onClick={() => handleRowClick(doc)}
+                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors cursor-pointer group"
+                  >
+                    <td className="px-6 py-4">
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors truncate max-w-[200px]">{doc.title}</p>
+                    </td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{doc.subject}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{doc.unit}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{doc.exam}</td>
+                    <td className="px-6 py-4 text-right">
+                      <span className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">OPEN</span>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {recentDocs.map(doc => (
-                    <tr 
-                      key={doc.id} 
-                      onClick={() => handleRowClick(doc)}
-                      className="border-b border-surface-100 dark:border-slate-700/50 last:border-0 hover:bg-surface-50 dark:hover:bg-slate-700 transition-colors cursor-pointer group"
-                    >
-                      <td className="px-6 py-4 font-semibold text-surface-800 dark:text-slate-200 truncate max-w-[200px] group-hover:text-brand-600 transition-colors">{doc.title}</td>
-                      <td className="px-6 py-4 text-surface-600 dark:text-slate-400">{doc.subject}</td>
-                      <td className="px-6 py-4 text-right">
-                        <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-md">OPEN</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {/* Mobile List View */}
-            <div className="block md:hidden divide-y divide-slate-100 dark:divide-slate-700/50">
-              {recentDocs.map(doc => (
-                <div 
-                  key={doc.id} 
-                  onClick={() => handleRowClick(doc)}
-                  className="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer active:bg-slate-100"
-                >
-                  <div className="overflow-hidden mr-4">
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{doc.title}</p>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">{doc.subject}</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-md">OPEN</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </section>
-      </div>
+          {/* Mobile Fallback (Hidden on md, but shown if needed) */}
+          <div className="md:hidden divide-y divide-slate-50 dark:divide-slate-800">
+            {recentDocs.map(doc => (
+              <div 
+                key={doc.id} 
+                onClick={() => handleRowClick(doc)}
+                className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{doc.title}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1">{doc.subject} • Unit {doc.unit} • {doc.exam}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
