@@ -21,6 +21,7 @@ export const Admin: React.FC = () => {
   const [unit, setUnit] = useState('');
   const [tags, setTags] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [docToDelete, setDocToDelete] = useState<string | null>(null);
 
   // Lists
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -118,9 +119,15 @@ export const Admin: React.FC = () => {
     await updateDoc(doc(db, 'requests', id), { status: 'fulfilled' });
   };
 
-  const handleDeleteDoc = async (id: string) => {
-    if (confirm('DESTRUCT_SEQUENCE_INITIALIZED? CONFIRM_DELETION')) {
-      await deleteDoc(doc(db, 'documents', id));
+  const handleDeleteDoc = (id: string) => {
+    setDocToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (docToDelete) {
+      await deleteDoc(doc(db, 'documents', docToDelete));
+      setDocToDelete(null);
+      setStatus({ type: 'success', text: 'DOCUMENT_DESTRUCTED_SUCCESSFULLY' });
     }
   };
 
@@ -452,6 +459,50 @@ export const Admin: React.FC = () => {
           {submissions.length === 0 && <div className="p-12 text-center text-slate-400 italic text-sm">No pending user contributions</div>}
         </div>
       )}
+      {/* Deletion Confirmation Modal */}
+      <AnimatePresence>
+        {docToDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-slate-900/80 backdrop-blur-md z-[10000] p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white dark:bg-slate-900 p-8 rounded-[32px] shadow-2xl max-w-sm w-full border border-slate-200 dark:border-slate-800 text-center space-y-6"
+            >
+              <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-full flex items-center justify-center mx-auto">
+                <Trash2 size={32} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+                  DESTRUCT_SEQUENCE_INITIALIZED?
+                </h3>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                  Confirm Permanent Deletion
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setDocToDelete(null)}
+                  className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-slate-200 transition-colors"
+                >
+                  NO
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-red-700 shadow-lg shadow-red-500/20 transition-all"
+                >
+                  YES
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
