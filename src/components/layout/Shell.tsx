@@ -65,8 +65,9 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
       {/* Sidebar (Desktop Only) */}
       <aside className="app-sidebar hidden lg:flex flex-col transition-transform duration-300">
-        <div className="p-6">
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 mb-8">CSE-C Exam Hub</h1>
+        <div className="flex justify-center mb-8">
+          <h1 className="text-3xl font-black tracking-widest text-slate-900 border-b-4 border-blue-600 pb-1">CSE-C</h1>
+        </div>
 
           <nav className="space-y-2">
             <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
@@ -117,7 +118,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-semibold text-surface-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 border border-transparent hover:border-red-100"
               >
                 <LogOut size={14} />
-                <span>Sign Out</span>
+                <title>CSE-C</title>
               </button>
             </>
           )}
@@ -128,7 +129,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       <main className="flex-1 lg:ml-60 flex flex-col min-h-screen w-full pb-16 lg:pb-0">
         <header className="h-20 bg-white/80 backdrop-blur-lg border-b border-surface-200 flex items-center justify-between px-4 md:px-8 shrink-0 sticky top-0 z-40 shadow-sm">
           <div className="flex items-center gap-4 md:gap-6 flex-1 max-w-2xl lg:ml-0">
-            <h1 className="lg:hidden text-lg font-bold text-slate-900 mr-2 shrink-0">CSE-C Exam Hub</h1>
+            <h1 className="lg:hidden text-2xl font-black text-slate-900 mr-2 shrink-0">CSE-C</h1>
             <form onSubmit={handleSearch} className="flex-1 relative group">
               <div className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none text-surface-400 group-focus-within:text-brand-600 transition-colors">
                 <SearchIcon size={14} className="md:w-4 md:h-4" />

@@ -10,9 +10,10 @@ export const uploadToCloudinary = async (file: File, folder: string = 'cse-c/oth
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset);
   formData.append('folder', folder);
+  formData.append('resource_type', 'auto');
 
   const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+    `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
     {
       method: 'POST',
       body: formData,

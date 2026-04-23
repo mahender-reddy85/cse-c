@@ -4,14 +4,15 @@ import { db } from '../lib/firebase';
 import { uploadToCloudinary } from '../lib/cloudinary';
 import { useAuth } from '../context/AuthContext';
 import { Document, RequestDoc, Submission } from '../types';
-import { Plus, Trash2, Edit2, Check, X, Inbox, FileUp, List, MessageSquare, ClipboardCheck } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Plus, Trash2, Edit2, Check, X, Inbox, FileUp, List, MessageSquare, ClipboardCheck, Upload, CheckCircle2, XCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const Admin: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'upload' | 'manage' | 'requests' | 'submissions'>('upload');
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Upload Form
   const [title, setTitle] = useState('');
@@ -84,7 +85,7 @@ export const Admin: React.FC = () => {
         isImportant
       });
 
-      setStatus({ type: 'success', text: 'DOCUMENT_DEPLOYED_TO_REPOSITORY' });
+      setShowSuccess(true);
       setTitle(''); setSubject(''); setUnit(''); setTags(''); setFile(null);
     } catch (err: any) {
       setStatus({ type: 'error', text: 'DEPLOYMENT_ERROR: ' + err.message });
@@ -165,18 +166,17 @@ export const Admin: React.FC = () => {
         ))}
       </div>
 
-      {status && (
-        <div className={`p-4 rounded-lg text-sm font-medium flex items-center justify-between border ${
-          status.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
-        }`}>
+      {status && status.type === 'error' && (
+        <div className="p-4 rounded-lg text-sm font-medium flex items-center justify-between border bg-red-50 border-red-200 text-red-700">
           <span>{status.text}</span>
           <button onClick={() => setStatus(null)} className="text-xs font-bold uppercase tracking-wider opacity-60">Dismiss</button>
         </div>
       )}
 
       {activeTab === 'upload' && (
-        <form onSubmit={handleUpload} className="card p-8 space-y-6 max-w-3xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleUpload} className="card p-10 space-y-8 max-w-5xl mx-auto">
+          {/* Main Attributes Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Document Title</label>
               <input required value={title} onChange={e => setTitle(e.target.value)} className="input-field" placeholder="e.g. Unit 3 DBMS Notes" />
@@ -191,36 +191,134 @@ export const Admin: React.FC = () => {
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Subject Name</label>
-              <input required value={subject} onChange={e => setSubject(e.target.value)} className="input-field" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Unit Number</label>
-              <input required value={unit} onChange={e => setUnit(e.target.value)} className="input-field" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Keywords (Comma separated)</label>
-              <input value={tags} onChange={e => setTags(e.target.value)} className="input-field" placeholder="imp, revision, notes" />
-            </div>
-            <div className="flex items-center gap-3 pt-6">
-              <input 
-                type="checkbox" 
-                id="important" 
-                checked={isImportant} 
-                onChange={e => setIsImportant(e.target.checked)} 
-                className="w-4 h-4 rounded text-brand-600 focus:ring-brand-600 border-slate-300" 
-              />
-              <label htmlFor="important" className="text-sm font-semibold text-slate-700 cursor-pointer">Mark as Critical Resource</label>
+              <input required value={subject} onChange={e => setSubject(e.target.value)} className="input-field" placeholder="e.g. DBMS" />
             </div>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deployment Payload</label>
-            <input type="file" required onChange={e => setFile(e.target.files?.[0] || null)} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-all" accept=".pdf,image/*" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Unit Number</label>
+                  <input required value={unit} onChange={e => setUnit(e.target.value)} className="input-field" placeholder="1" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tags</label>
+                  <input value={tags} onChange={e => setTags(e.target.value)} className="input-field" placeholder="imp, notes" />
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <input 
+                  type="checkbox" 
+                  id="important" 
+                  checked={isImportant} 
+                  onChange={e => setIsImportant(e.target.checked)} 
+                  className="w-5 h-5 rounded text-brand-600 focus:ring-brand-600 border-slate-300 cursor-pointer" 
+                />
+                <label htmlFor="important" className="text-sm font-bold text-slate-700 cursor-pointer">Mark as Critical Resource</label>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deployment Payload</label>
+              <div className="relative group">
+                <input 
+                  type="file" 
+                  required 
+                  onChange={e => setFile(e.target.files?.[0] || null)} 
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                  accept=".pdf,image/*" 
+                />
+                <div className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all ${file ? 'border-brand-500 bg-brand-50/30' : 'border-slate-200 bg-slate-50/50 hover:border-brand-300 hover:bg-brand-50/10'}`}>
+                  <Upload className={`mb-3 ${file ? 'text-brand-600' : 'text-slate-400'}`} size={32} />
+                  <p className="text-sm font-bold text-slate-700">
+                    {file ? file.name : 'Drop file or click to browse'}
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">PDF or Images (Max 10MB)</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <button type="submit" disabled={loading} className="btn-primary w-full py-3">
-            {loading ? 'Initializing Deployment...' : 'Execute Deployment'}
+
+          <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-base shadow-lg shadow-brand-200">
+            {loading ? (
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Initializing Deployment...
+              </div>
+            ) : (
+              'Execute Deployment'
+            )}
           </button>
         </form>
       )}
+
+      {/* Success Animation Overlay */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm z-[9999] p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              className="bg-white p-10 rounded-[32px] shadow-2xl flex flex-col items-center gap-6 max-w-xs w-full"
+              onAnimationComplete={() => setTimeout(() => setShowSuccess(false), 2500)}
+            >
+              <div className="relative w-24 h-24">
+                <svg className="w-full h-full" viewBox="0 0 100 100">
+                  <motion.circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    fill="none"
+                    stroke="#10b981"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                  />
+                  <motion.path
+                    d="M30 52 L45 67 L70 37"
+                    fill="none"
+                    stroke="#10b981"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
+                  />
+                </svg>
+              </div>
+              <div className="text-center space-y-1">
+                <motion.h3
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2 }}
+                  className="text-slate-900 font-bold text-lg"
+                >
+                  Success!
+                </motion.h3>
+                <motion.p
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.4 }}
+                  className="text-slate-500 font-medium text-sm"
+                >
+                  Document deployed to repository.
+                </motion.p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {activeTab === 'manage' && (
         <div className="card divide-y divide-slate-100">
