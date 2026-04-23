@@ -57,7 +57,16 @@ export const Admin: React.FC = () => {
 
     setLoading(true);
     try {
-      const fileUrl = await uploadToCloudinary(file);
+      // Construct organized folder path: cse-c/mid/subject/unit-1
+      const examType = exam.toLowerCase().includes('mid') ? 'mid' : 'sem';
+      const sanitizedSubject = subject.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+      const sanitizedUnit = unit.toLowerCase().trim().includes('unit') 
+        ? unit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') 
+        : `unit-${unit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`;
+      
+      const folderPath = `cse-c/${examType}/${sanitizedSubject}/${sanitizedUnit}`;
+      
+      const fileUrl = await uploadToCloudinary(file, folderPath);
       
       const fileType = file.type.includes('pdf') ? 'pdf' : 'image';
 

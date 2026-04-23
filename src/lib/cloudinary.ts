@@ -1,19 +1,18 @@
-export const uploadToCloudinary = async (file: File) => {
-  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-  console.log('Cloudinary Config:', { cloudName, uploadPreset });
+export const uploadToCloudinary = async (file: File, folder: string = 'cse-c/others') => {
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dkfy6ofdq';
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'cse-c';
 
   if (!cloudName || !uploadPreset) {
-    throw new Error(`Cloudinary configuration missing. (Cloud: ${cloudName || 'MISSING'}, Preset: ${uploadPreset || 'MISSING'}). Please restart your dev server.`);
+    throw new Error('Cloudinary configuration missing.');
   }
 
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset);
+  formData.append('folder', folder);
 
   const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+    `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
     {
       method: 'POST',
       body: formData,

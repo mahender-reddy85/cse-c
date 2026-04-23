@@ -91,7 +91,16 @@ export const Requests: React.FC = () => {
     setLoading(true);
     try {
       const userEmail = user.email || profile.email;
-      const fileUrl = await uploadToCloudinary(subFile);
+      
+      // Construct organized folder path for student submissions
+      const sanitizedSubject = subSubject.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+      const sanitizedUnit = subUnit.toLowerCase().trim().includes('unit') 
+        ? subUnit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') 
+        : `unit-${subUnit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`;
+      
+      const folderPath = `cse-c/submissions/${sanitizedSubject}/${sanitizedUnit}`;
+      
+      const fileUrl = await uploadToCloudinary(subFile, folderPath);
 
       await addDoc(collection(db, 'submissions'), {
         title: subTitle,
