@@ -63,7 +63,6 @@ export const Requests: React.FC = () => {
       });
       
       setSubmitAnimation('request');
-      setMessage({ type: 'success', text: 'REQUEST_TRANSMITTED_SUCCESSFULLY' });
       setReqTitle(''); setReqSubject(''); setReqUnit('');
     } catch (err) {
       setMessage({ type: 'error', text: 'TRANSMISSION_FAILED' });
@@ -100,7 +99,7 @@ export const Requests: React.FC = () => {
       await addDoc(collection(db, 'submissions'), {
         title: subTitle,
         subject: subSubject,
-        unit: subUnit,
+        unit: subUnit.toLowerCase().replace(/^unit\s*/i, ''),
         fileUrl,
         submittedBy: userEmail,
         status: 'pending',
@@ -108,7 +107,6 @@ export const Requests: React.FC = () => {
       });
 
       setSubmitAnimation('submit');
-      setMessage({ type: 'success', text: 'SUBMISSION_UPLINK_COMPLETE' });
       setSubTitle(''); setSubSubject(''); setSubUnit(''); setSubFile(null);
     } catch (err) {
       setMessage({ type: 'error', text: 'UPLINK_PROTOCOL_FAILURE' });

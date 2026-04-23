@@ -18,17 +18,8 @@ export const Dashboard: React.FC = () => {
   const [exam, setExam] = useState<string>('');
   const [subject, setSubject] = useState<string>('');
   const [unit, setUnit] = useState<string>('');
+  const [filteredDocs, setFilteredDocs] = useState<Document[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Live Search logic for mobile search bar (Debounced)
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (searchTerm.trim()) {
-        navigate(`/search?q=${encodeURIComponent(searchTerm)}`, { replace: true });
-      }
-    }, 300);
-    return () => clearTimeout(handler);
-  }, [searchTerm, navigate]);
 
   const fetchDocs = async () => {
     if (authLoading || !profile) return;
@@ -40,7 +31,9 @@ export const Dashboard: React.FC = () => {
       if (unit) q = query(q, where('unit', '==', unit));
 
       const snap = await getDocs(q);
-      setDocs(snap.docs.map(d => ({ id: d.id, ...d.data() } as Document)));
+      const fetchedDocs = snap.docs.map(d => ({ id: d.id, ...d.data() } as Document));
+      setDocs(fetchedDocs);
+      setFilteredDocs(fetchedDocs);
     } catch (error) {
       console.error("Error fetching explorer docs:", error);
     } finally {
@@ -51,6 +44,21 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     fetchDocs();
   }, [exam, subject, unit, authLoading, profile]);
+
+  // Local filtering based on searchTerm
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredDocs(docs);
+      return;
+    }
+    const term = searchTerm.toLowerCase();
+    const filtered = docs.filter(doc => 
+      doc.title.toLowerCase().includes(term) || 
+      doc.subject.toLowerCase().includes(term) ||
+      doc.tags.some(tag => tag.toLowerCase().includes(term))
+    );
+    setFilteredDocs(filtered);
+  }, [searchTerm, docs]);
 
   const ButtonGroup = ({ label, icon: Icon, value, options, onChange }: any) => (
     <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
@@ -121,9 +129,9 @@ export const Dashboard: React.FC = () => {
             Resources
           </h3>
         </div>
-        {docs.length > 0 ? (
+        {filteredDocs.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {docs.map(doc => (
+            {filteredDocs.map(doc => (
               <DocumentCard key={doc.id} doc={doc} />
             ))}
           </div>

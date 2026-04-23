@@ -60,7 +60,10 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
             </h3>
 
             <div className="flex items-center gap-2 text-[11px] text-slate-400 dark:text-slate-500">
-              <span className="font-medium">Unit {docData.unit}</span>
+              <span className="font-medium">
+                {docData.unit.toLowerCase().startsWith('unit') ? '' : 'Unit '}
+                {docData.unit}
+              </span>
               {docData.tags?.length > 0 && (
                 <>
                   <span>•</span>

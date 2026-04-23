@@ -183,6 +183,9 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                         <div className="p-3 border-b border-slate-50 mb-1">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Account</p>
                           <p className="text-xs font-semibold text-slate-900 truncate">{user?.email}</p>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-tight font-bold mt-0.5">
+                            {isAdmin ? 'ADMIN' : 'USER'}
+                          </p>
                         </div>
                         <button
                           onClick={() => { handleLogout(); setShowUserMenu(false); }}
