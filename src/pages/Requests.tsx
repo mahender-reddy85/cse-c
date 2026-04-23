@@ -174,7 +174,7 @@ export const Requests: React.FC = () => {
               <div className="grid grid-cols-1 gap-3">
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Subject</label>
-                  <input required value={subSubject} onChange={e => setSubSubject(e.target.value)} className="input-field text-sm py-2" />
+                  <input required value={subSubject} onChange={e => setSubSubject(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. DBMS, ML, etc." />
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Unit</label>
