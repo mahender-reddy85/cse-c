@@ -41,44 +41,39 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -4, shadow: "lg" }}
       className="card group relative flex flex-col h-full bg-white transition-all overflow-hidden hover:shadow-xl"
-    >
-      <div className="p-6 flex-1 space-y-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1 space-y-3">
-            <div className="space-y-1">
-              <span className="inline-block text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-tighter mb-1">
+      <div className="p-6 flex-1 flex flex-col justify-between">
+        <div className="flex justify-between items-start gap-4">
+          <div className="space-y-1.5 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">
                 {docData.exam}
               </span>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+              <span className="text-[10px] text-slate-300 dark:text-slate-600">|</span>
+              <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                 {docData.subject}
-              </p>
-              <h3 className="text-xl font-black text-slate-900 leading-tight">
-                {docData.title}
-              </h3>
+              </span>
             </div>
+            
+            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100 leading-snug">
+              {docData.title}
+            </h3>
 
-            <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                <Hash size={10} className="text-slate-300" />
-                UNIT {docData.unit}
-              </p>
-
-              <div className="flex flex-wrap gap-1.5">
-                {docData.tags?.map(tag => (
-                  <span key={tag} className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                    #{tag}
-                  </span>
-                ))}
-                {!docData.tags?.length && docData.uploadedBy && (
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                    #{docData.uploadedBy.split('@')[0]}
-                  </span>
-                )}
-              </div>
+            <div className="flex items-center gap-2 text-[11px] text-slate-400 dark:text-slate-500">
+              <span className="font-medium">Unit {docData.unit}</span>
+              {docData.tags?.length > 0 && (
+                <>
+                  <span>•</span>
+                  <div className="flex gap-1.5">
+                    {docData.tags.map(tag => (
+                      <span key={tag}>#{tag}</span>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
-          <div className="p-3 bg-slate-50 rounded-2xl text-slate-400 group-hover:text-brand-600 group-hover:bg-brand-50 transition-all duration-300 ml-3 shrink-0 border border-slate-100">
-            {docData.fileType === 'pdf' ? <FileText size={22} /> : <ImageIcon size={22} />}
+          <div className="text-slate-300 dark:text-slate-600 shrink-0">
+            {docData.fileType === 'pdf' ? <FileText size={20} /> : <ImageIcon size={20} />}
           </div>
         </div>
       </div>

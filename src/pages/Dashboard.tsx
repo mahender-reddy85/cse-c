@@ -84,15 +84,25 @@ export const Dashboard: React.FC = () => {
             </table>
           </div>
           {/* Mobile Fallback (Hidden on md, but shown if needed) */}
-          <div className="md:hidden divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
             {recentDocs.map(doc => (
               <div 
                 key={doc.id} 
                 onClick={() => handleRowClick(doc)}
-                className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-5 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all cursor-pointer active:scale-[0.98]"
               >
-                <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{doc.title}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1">{doc.subject} • Unit {doc.unit} • {doc.exam}</p>
+                <div className="space-y-1.5 overflow-hidden pr-4">
+                  <span className="inline-block text-[9px] font-black px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
+                    {doc.exam}
+                  </span>
+                  <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{doc.title}</p>
+                  <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest truncate">
+                    {doc.subject} • UNIT {doc.unit}
+                  </p>
+                </div>
+                <div className="shrink-0">
+                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1.5 rounded-lg border border-blue-100 dark:border-blue-800 uppercase">OPEN</span>
+                </div>
               </div>
             ))}
           </div>
