@@ -53,9 +53,11 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         <NavLink to="/browse" className={({ isActive }) => `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110 shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'}`}>
           <Compass size={22} />
         </NavLink>
-        <NavLink to="/requests" className={({ isActive }) => `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110 shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'}`}>
-          <Clock size={22} />
-        </NavLink>
+        {!isAdmin && (
+          <NavLink to="/requests" className={({ isActive }) => `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110 shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'}`}>
+            <Clock size={22} />
+          </NavLink>
+        )}
         {isAdmin && (
           <NavLink to="/admin" className={({ isActive }) => `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110 shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'}`}>
             <ShieldAlert size={22} />
@@ -65,14 +67,15 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
       {/* Sidebar (Desktop Only) */}
       <aside className="app-sidebar hidden lg:flex flex-col transition-transform duration-300">
-        <div className="flex justify-center mb-8">
-          <h1 className="text-3xl font-black tracking-widest text-slate-900 border-b-4 border-blue-600 pb-1">CSE-C</h1>
-        </div>
+        <div className="p-6">
+          <div className="flex justify-center mb-8">
+            <h1 className="text-3xl font-black tracking-widest text-slate-900 border-b-4 border-blue-600 pb-1">CSE-C</h1>
+          </div>
 
           <nav className="space-y-2">
             <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
             <NavItem to="/browse" icon={Compass} label="Explorer" />
-            <NavItem to="/requests" icon={Clock} label="My Activity" />
+            {!isAdmin && <NavItem to="/requests" icon={Clock} label="My Activity" />}
           </nav>
 
           {isAdmin && (
@@ -118,7 +121,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-semibold text-surface-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 border border-transparent hover:border-red-100"
               >
                 <LogOut size={14} />
-                <title>CSE-C</title>
+                <span>Sign Out</span>
               </button>
             </>
           )}
