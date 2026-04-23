@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { RequestDoc, Submission } from '../types';
 import { Send, Upload, CheckCircle2, XCircle, FilePlus, MessageCirclePlus, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { sanitizePath, sanitizeUnit, validateFile } from '../lib/utils';
 
 export const Requests: React.FC = () => {
   const { user, profile, loading: authLoading } = useAuth();
@@ -76,31 +77,25 @@ export const Requests: React.FC = () => {
     e.preventDefault();
     if (!subFile || !user || !profile || loading) return;
 
-    if (subFile.size > 10 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'FILE_SIZE_EXCEEDS_10MB_LIMIT' });
-      return;
-    }
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(subFile.type)) {
-      setMessage({ type: 'error', text: 'ONLY_PDF_AND_IMAGES_SUPPORTED' });
+    const validation = validateFile(subFile);
+    if (!validation.valid) {
+      setMessage({ type: 'error', text: validation.error! });
       return;
     }
 
     setLoading(true);
     try {
       const userEmail = user.email || profile.email;
-      const sanitizedSubject = subSubject.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-      const sanitizedUnit = subUnit.toLowerCase().trim().includes('unit') 
-        ? subUnit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') 
-        : `unit-${subUnit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`;
+      const sSub = sanitizePath(subSubject);
+      const sUnit = `unit-${sanitizeUnit(subUnit)}`;
       
-      const folderPath = `cse-c/submissions/${sanitizedSubject}/${sanitizedUnit}`;
+      const folderPath = `cse-c/submissions/${sSub}/${sUnit}`;
       const fileUrl = await uploadToCloudinary(subFile, folderPath);
 
       await addDoc(collection(db, 'submissions'), {
         title: subTitle,
         subject: subSubject,
-        unit: subUnit.toLowerCase().replace(/^unit\s*/i, ''),
+        unit: sanitizeUnit(subUnit),
         tags: subTags.split(',').map(t => t.trim()).filter(t => t),
         fileUrl,
         submittedBy: userEmail,

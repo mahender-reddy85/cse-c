@@ -7,6 +7,7 @@ import { Document, RequestDoc, Submission } from '../types';
 import { Plus, Trash2, Edit2, Check, X, Inbox, FileUp, List, MessageSquare, ClipboardCheck, Upload, CheckCircle2, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SUBJECTS, EXAMS, UNITS } from '../lib/constants';
+import { sanitizePath, sanitizeUnit, validateFile } from '../lib/utils';
 
 export const Admin: React.FC = () => {
   const { user } = useAuth();
@@ -47,26 +48,19 @@ export const Admin: React.FC = () => {
     if (!file || !user) return;
 
     // Client-side validation
-    if (file.size > 10 * 1024 * 1024) {
-      setStatus({ type: 'error', text: 'FILE_SIZE_EXCEEDS_10MB_LIMIT' });
-      return;
-    }
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      setStatus({ type: 'error', text: 'ONLY_PDF_AND_IMAGES_SUPPORTED' });
+    const validation = validateFile(file);
+    if (!validation.valid) {
+      setStatus({ type: 'error', text: validation.error! });
       return;
     }
 
     setLoading(true);
     try {
-      // Construct organized folder path: cse-c/mid/subject/unit-1
       const examType = exam.toLowerCase().includes('mid') ? 'mid' : 'sem';
-      const sanitizedSubject = subject.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-      const sanitizedUnit = unit.toLowerCase().trim().includes('unit') 
-        ? unit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') 
-        : `unit-${unit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`;
+      const sSub = sanitizePath(subject);
+      const sUnit = `unit-${sanitizeUnit(unit)}`;
       
-      const folderPath = `cse-c/${examType}/${sanitizedSubject}/${sanitizedUnit}`;
+      const folderPath = `cse-c/${examType}/${sSub}/${sUnit}`;
       
       const fileUrl = await uploadToCloudinary(file, folderPath);
       

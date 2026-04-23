@@ -41,7 +41,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     navigate('/login');
   };
 
-  const SUBJECTS = ['ML', 'AFLC', 'ITE', 'WT', 'WT LAB', 'ML LAB'];
+
 
   const NavItem = ({ to, icon: Icon, label }: { to: string; icon: any; label: string }) => (
     <NavLink
