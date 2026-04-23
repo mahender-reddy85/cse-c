@@ -205,11 +205,30 @@ export const Admin: React.FC = () => {
             <div className="grid grid-cols-2 gap-6 w-full max-w-xl">
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Unit Number</label>
-                <input required value={unit} onChange={e => setUnit(e.target.value)} className="input-field text-center" placeholder="1" />
+                <select 
+                  required 
+                  value={unit} 
+                  onChange={e => setUnit(e.target.value)} 
+                  className="input-field text-center"
+                >
+                  <option value="">Select Unit</option>
+                  {[1, 2, 3, 4, 5].map(u => (
+                    <option key={u} value={u.toString()}>{u}</option>
+                  ))}
+                </select>
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Tags</label>
-                <input value={tags} onChange={e => setTags(e.target.value)} className="input-field text-center" placeholder="imp, notes" />
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Tags (Max 2)</label>
+                <input 
+                  value={tags} 
+                  onChange={e => {
+                    const val = e.target.value;
+                    const commaCount = (val.match(/,/g) || []).length;
+                    if (commaCount <= 1) setTags(val);
+                  }} 
+                  className="input-field text-center" 
+                  placeholder="tag1, tag2" 
+                />
               </div>
             </div>
 
@@ -241,7 +260,7 @@ export const Admin: React.FC = () => {
               <button 
                 type="submit" 
                 disabled={loading} 
-                className="w-full h-14 bg-slate-900 hover:bg-blue-600 disabled:bg-slate-200 text-white rounded-xl text-sm font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-lg hover:shadow-blue-500/25 group relative overflow-hidden"
+                className="w-full h-14 bg-blue-600 hover:bg-slate-900 disabled:bg-slate-200 text-white rounded-xl text-sm font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-slate-900/25 group relative overflow-hidden"
               >
                 {loading ? (
                   <div className="flex items-center justify-center gap-3">
