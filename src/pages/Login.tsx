@@ -97,13 +97,13 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen relative flex items-start justify-center p-4 pt-16 md:pt-24 overflow-hidden">
       {/* Background Image with Overlay */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000"
         style={{ backgroundImage: "url('/cse-c.png')" }}
       />
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[1px]" />
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -144,7 +144,7 @@ export const Login: React.FC = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5, duration: 0.4 }}
-          className="bg-white border border-slate-200 p-6 rounded-2xl shadow-lg space-y-4"
+          className="bg-emerald-950/10 backdrop-blur-xl border border-emerald-500/20 p-6 rounded-2xl shadow-2xl space-y-4"
         >
           <div className="space-y-3">
             {/* Admin Sign In Button */}
@@ -153,7 +153,7 @@ export const Login: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               onClick={handleAdminLogin}
               disabled={isLoading}
-              className="w-full relative overflow-hidden group bg-white text-slate-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-slate-200 hover:border-slate-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full relative overflow-hidden group bg-emerald-50/90 text-emerald-900 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-emerald-200/50 hover:border-emerald-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               <div className="relative z-10 flex items-center justify-center gap-2 group-hover:text-white transition-colors duration-300">
@@ -168,7 +168,7 @@ export const Login: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               onClick={handleMemberLogin}
               disabled={isLoading}
-              className="w-full relative overflow-hidden group bg-white text-slate-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-slate-200 hover:border-slate-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full relative overflow-hidden group bg-emerald-50/90 text-emerald-900 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-emerald-200/50 hover:border-emerald-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               <div className="relative z-10 flex items-center justify-center gap-2 group-hover:text-white transition-colors duration-300">
