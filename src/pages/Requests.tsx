@@ -32,7 +32,6 @@ export const Requests: React.FC = () => {
   useEffect(() => {
     if (!user || authLoading || !profile) return;
     
-    // Use profile email as fallback for anonymous users
     const userEmail = user.email || profile.email;
     
     const qReq = query(collection(db, 'requests'), where('requestedBy', '==', userEmail), orderBy('createdAt', 'desc'));
@@ -77,7 +76,6 @@ export const Requests: React.FC = () => {
     e.preventDefault();
     if (!subFile || !user || !profile || loading) return;
 
-    // Client-side validation
     if (subFile.size > 10 * 1024 * 1024) {
       setMessage({ type: 'error', text: 'FILE_SIZE_EXCEEDS_10MB_LIMIT' });
       return;
@@ -91,15 +89,12 @@ export const Requests: React.FC = () => {
     setLoading(true);
     try {
       const userEmail = user.email || profile.email;
-      
-      // Construct organized folder path for student submissions
       const sanitizedSubject = subSubject.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
       const sanitizedUnit = subUnit.toLowerCase().trim().includes('unit') 
         ? subUnit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') 
         : `unit-${subUnit.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')}`;
       
       const folderPath = `cse-c/submissions/${sanitizedSubject}/${sanitizedUnit}`;
-      
       const fileUrl = await uploadToCloudinary(subFile, folderPath);
 
       await addDoc(collection(db, 'submissions'), {
@@ -124,12 +119,46 @@ export const Requests: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Main Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
-        {/* Dividing Line */}
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-slate-200 transform -translate-x-1/2 hidden lg:block"></div>
         
-        {/* Left Column - Submit Resource Form */}
+        {/* Left Column - Request Form */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-3">
+            <MessageCirclePlus size={16} className="text-blue-600" />
+            <h2 className="text-lg font-bold text-slate-800">Request Doc</h2>
+          </div>
+          
+          <motion.form 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onSubmit={handleRequest} 
+            className="card p-5 space-y-4 relative"
+          >
+            <div className="space-y-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Document Title</label>
+                <input required value={reqTitle} onChange={e => setReqTitle(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Operating Systems Previous Year Paper" />
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Subject</label>
+                  <input required value={reqSubject} onChange={e => setReqSubject(e.target.value)} className="input-field text-sm py-2" placeholder="Select or type subject" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Unit</label>
+                  <input value={reqUnit} onChange={e => setReqUnit(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Unit 3" />
+                </div>
+              </div>
+            </div>
+            <button type="submit" disabled={loading} className="btn-primary w-full py-2 text-sm">
+              <Send size={14} />
+              <span>{loading ? 'Transmitting...' : 'Submit Request'}</span>
+            </button>
+          </motion.form>
+        </div>
+
+        {/* Right Column - Submit Resource Form */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-3">
             <FilePlus size={16} className="text-blue-600" />
@@ -181,45 +210,8 @@ export const Requests: React.FC = () => {
             </button>
           </motion.form>
         </div>
-
-        {/* Right Column - Request Form */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-3">
-            <MessageCirclePlus size={16} className="text-blue-600" />
-            <h2 className="text-lg font-bold text-slate-800">Request Doc</h2>
-          </div>
-          
-          <motion.form 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onSubmit={handleRequest} 
-            className="card p-5 space-y-4 relative"
-          >
-            <div className="space-y-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Document Title</label>
-                <input required value={reqTitle} onChange={e => setReqTitle(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Operating Systems Previous Year Paper" />
-              </div>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Subject</label>
-                  <input required value={reqSubject} onChange={e => setReqSubject(e.target.value)} className="input-field text-sm py-2" placeholder="Select or type subject" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Unit</label>
-                  <input value={reqUnit} onChange={e => setReqUnit(e.target.value)} className="input-field text-sm py-2" placeholder="e.g. Unit 3" />
-                </div>
-              </div>
-            </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full py-2 text-sm">
-              <Send size={14} />
-              <span>{loading ? 'Transmitting...' : 'Submit Request'}</span>
-            </button>
-          </motion.form>
-        </div>
       </div>
 
-      {/* Global Success Animation */}
       <AnimatePresence>
         {submitAnimation && (
           <motion.div
@@ -285,8 +277,6 @@ export const Requests: React.FC = () => {
         )}
       </AnimatePresence>
 
-
-      {/* Message Toast */}
       <AnimatePresence mode="wait">
         {message && (
           <motion.div
