@@ -200,22 +200,22 @@ export const Admin: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Unit Number</label>
-                  <input required value={unit} onChange={e => setUnit(e.target.value)} className="input-field" placeholder="1" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tags</label>
-                  <input value={tags} onChange={e => setTags(e.target.value)} className="input-field" placeholder="imp, notes" />
-                </div>
+          <div className="flex flex-col items-center gap-8 pt-4">
+            {/* Centered Middle Row */}
+            <div className="grid grid-cols-2 gap-6 w-full max-w-xl">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Unit Number</label>
+                <input required value={unit} onChange={e => setUnit(e.target.value)} className="input-field text-center" placeholder="1" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Tags</label>
+                <input value={tags} onChange={e => setTags(e.target.value)} className="input-field text-center" placeholder="imp, notes" />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deployment Payload</label>
+            {/* Deployment Payload (Centered) */}
+            <div className="flex flex-col gap-2 w-full max-w-2xl">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Deployment Payload</label>
               <div className="relative group">
                 <input 
                   type="file" 
@@ -224,40 +224,43 @@ export const Admin: React.FC = () => {
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
                   accept=".pdf,image/*" 
                 />
-                <div className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all ${file ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200 bg-slate-50/50 hover:border-blue-300 hover:bg-blue-50/10'}`}>
-                  <Upload className={`mb-3 ${file ? 'text-blue-600' : 'text-slate-400'}`} size={32} />
+                <div className={`border-2 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center transition-all duration-300 ${file ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200 bg-slate-50/50 hover:border-blue-400 hover:bg-blue-50/20'}`}>
+                  <div className={`p-4 rounded-full mb-4 transition-colors ${file ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <Upload size={28} />
+                  </div>
                   <p className="text-sm font-bold text-slate-700">
                     {file ? file.name : 'Drop file or click to browse'}
                   </p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">PDF or Images (Max 10MB)</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">PDF or Images (Max 10MB)</p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <button 
-            type="submit" 
-            disabled={loading} 
-            className="btn-primary w-full h-16 text-base shadow-lg shadow-blue-100 group relative overflow-hidden"
-          >
-            {loading ? (
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Processing Upload...</span>
-              </div>
-            ) : (
-              <div className="relative h-full w-full flex items-center justify-center">
-                {/* Initial Text */}
-                <span className="absolute transition-all duration-500 transform group-hover:-translate-y-12 group-hover:opacity-0 font-bold uppercase tracking-widest">
-                  Upload
-                </span>
-                {/* Hover Text */}
-                <span className="absolute transition-all duration-500 transform translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 font-black uppercase tracking-[0.2em]">
-                  Deploy
-                </span>
-              </div>
-            )}
-          </button>
+            {/* Minimalist Action Button */}
+            <div className="w-full max-w-md pt-4">
+              <button 
+                type="submit" 
+                disabled={loading} 
+                className="w-full h-14 bg-slate-900 hover:bg-blue-600 disabled:bg-slate-200 text-white rounded-xl text-sm font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-lg hover:shadow-blue-500/25 group relative overflow-hidden"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Processing...</span>
+                  </div>
+                ) : (
+                  <div className="relative h-full w-full flex items-center justify-center">
+                    <span className="absolute transition-all duration-500 transform group-hover:-translate-y-10 group-hover:opacity-0">
+                      Upload
+                    </span>
+                    <span className="absolute transition-all duration-500 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 text-blue-50">
+                      Deploy
+                    </span>
+                  </div>
+                )}
+              </button>
+            </div>
+          </div>
         </form>
       )}
 
