@@ -150,7 +150,7 @@ export const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between mb-6 px-2">
           <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center gap-3">
             <Layers className="w-5 h-5 text-blue-600" />
-            Resources Repository
+            Resources
           </h3>
         </div>
         {docs.length > 0 ? (

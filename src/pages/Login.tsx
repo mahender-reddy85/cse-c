@@ -97,9 +97,13 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden bg-white">
-      {/* Simple white background */}
-      <div className="absolute inset-0 bg-white" />
+    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
+        style={{ backgroundImage: "url('/bg.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -108,28 +112,28 @@ export const Login: React.FC = () => {
         className="z-10 w-full max-w-md"
       >
         {/* Title */}
-        <div className="text-center mb-8">
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-sm font-bold text-brand-600 uppercase tracking-wider mb-2"
+        <div className="text-center mb-10">
+          <motion.h1 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="text-6xl font-black text-blue-600 tracking-tight mb-2 italic"
           >
             CSE-C
-          </motion.p>
-          <motion.h1 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-4xl font-black tracking-tighter text-surface-900 mb-2"
-          >
-            Exam Hub
           </motion.h1>
-          <motion.p 
+          <motion.h2 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-sm text-surface-600 font-medium"
+            className="text-3xl font-bold tracking-tight text-white mb-2"
+          >
+            Exam Hub
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-sm text-slate-200 font-medium"
           >
             Your Gateway to Academic Excellence
           </motion.p>
@@ -140,7 +144,7 @@ export const Login: React.FC = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5, duration: 0.4 }}
-          className="bg-white border border-surface-200 p-6 rounded-2xl shadow-lg space-y-4"
+          className="bg-white border border-slate-200 p-6 rounded-2xl shadow-lg space-y-4"
         >
           <div className="space-y-3">
             {/* Admin Sign In Button */}
@@ -149,9 +153,9 @@ export const Login: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               onClick={handleAdminLogin}
               disabled={isLoading}
-              className="w-full relative overflow-hidden group bg-white text-surface-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-surface-200 hover:border-surface-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full relative overflow-hidden group bg-white text-slate-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-slate-200 hover:border-slate-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-brand-500 to-brand-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               <div className="relative z-10 flex items-center justify-center gap-2 group-hover:text-white transition-colors duration-300">
                 {isLoading ? <Loader2 size={18} className="animate-spin" /> : <LogIn size={18} />}
                 <span className="text-base">{isLoading ? 'Authenticating...' : 'Sign in as Admin'}</span>
@@ -164,9 +168,9 @@ export const Login: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               onClick={handleMemberLogin}
               disabled={isLoading}
-              className="w-full relative overflow-hidden group bg-white text-surface-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-surface-200 hover:border-surface-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full relative overflow-hidden group bg-white text-slate-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg border border-slate-200 hover:border-slate-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-brand-500 to-brand-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               <div className="relative z-10 flex items-center justify-center gap-2 group-hover:text-white transition-colors duration-300">
                 {isLoading ? <Loader2 size={18} className="animate-spin" /> : <LogIn size={18} />}
                 <span className="text-base">{isLoading ? 'Authenticating...' : 'Sign in as Member'}</span>

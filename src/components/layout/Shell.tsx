@@ -127,7 +127,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           {/* Center: Search Bar */}
           <div className="flex justify-center">
             <form onSubmit={handleSearch} className="w-full max-w-xs md:max-w-md relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none text-surface-400 group-focus-within:text-brand-600 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
                 <SearchIcon size={14} className="md:w-4 md:h-4" />
               </div>
               <input 
@@ -135,7 +135,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search resources..." 
-                className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-xl pl-10 md:pl-12 pr-4 py-2 text-sm focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none placeholder:text-slate-400"
+                className="w-full bg-slate-50 border-2 border-slate-100 dark:bg-slate-900 dark:border-slate-800 rounded-xl pl-10 md:pl-12 pr-4 py-2 text-sm focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none placeholder:text-slate-400 dark:text-slate-200"
               />
             </form>
           </div>

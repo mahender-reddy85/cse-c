@@ -79,9 +79,9 @@ export const Search: React.FC = () => {
       <div>
         {searchTerm ? (
           <div>
-            <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
-              <h2 className="text-sm font-bold text-slate-700">
-                Matching Resources ({filteredDocs.length})
+            <div className="flex items-center justify-between mb-8 border-b border-slate-200 dark:border-slate-800 pb-4">
+              <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                Found {filteredDocs.length} matching resources
               </h2>
             </div>
             {filteredDocs.length > 0 ? (
@@ -91,26 +91,22 @@ export const Search: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center py-20 px-6 text-center"
-              >
-                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-300 dark:text-slate-600 mb-4 shadow-inner">
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-300 dark:text-slate-700 mb-6">
                   <SearchIcon size={32} />
                 </div>
-                <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">No matches found</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] mt-1 leading-relaxed">
-                  We couldn't find anything for "{searchTerm}". Try checking your spelling or use different keywords.
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No results found</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xs mx-auto">
+                  We couldn't find any documents matching "{searchTerm}".
                 </p>
-              </motion.div>
+              </div>
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-32 opacity-20 select-none">
-            <SearchIcon size={80} className="mb-4 text-slate-300" />
-            <p className="font-bold text-sm uppercase tracking-widest text-slate-400">
-              Enter Search Criteria
+          <div className="flex flex-col items-center justify-center py-40 opacity-30 select-none">
+            <SearchIcon size={64} className="mb-6 text-slate-300 dark:text-slate-700" />
+            <p className="font-bold text-xs uppercase tracking-[0.2em] text-slate-400">
+              Enter keywords to search
             </p>
           </div>
         )}

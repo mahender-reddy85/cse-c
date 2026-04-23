@@ -27,7 +27,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let unsubscribeProfile: (() => void) | null = null;
@@ -41,8 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (authUser) {
-        // Don't set loading to true for existing users
-        setLoading(false);
+        // We are still loading until profile is fetched
     unsubscribeProfile = onSnapshot(doc(db, 'users', authUser.uid), async (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
