@@ -7,9 +7,7 @@ import { DocumentCard } from '../components/DocumentCard';
 import { Layers, Book, Hash, Search as SearchIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const SUBJECTS = ['AI', 'ML', 'AFLC', 'ITE', 'WT', 'WT LAB', 'ML LAB'];
-const EXAMS = ['Mid-1', 'Mid-2', 'SEM'];
-const UNITS = ['1', '2', '3', '4', '5'];
+import { SUBJECTS, EXAMS, UNITS } from '../lib/constants';
 
 export const Dashboard: React.FC = () => {
   const { profile, loading: authLoading } = useAuth();

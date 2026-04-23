@@ -4,8 +4,7 @@ import { signInWithGoogle, signInWithGoogleRedirect, signInAsGuest, getRedirectR
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { LogIn, Loader2, HelpCircle, UserCircle } from 'lucide-react';
 import { motion } from 'motion/react';
-
-const BOOTSTRAP_ADMINS = ['likkimahenderreddy123@gmail.com'];
+import { BOOTSTRAP_ADMINS } from '../lib/constants';
 
 export const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);

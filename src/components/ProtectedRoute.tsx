@@ -16,7 +16,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminO
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-          <span className="text-slate-500 font-medium text-sm animate-pulse">Establishing Session...</span>
+          <span className="text-slate-600 font-bold text-sm uppercase tracking-widest animate-pulse">Let's go CSE-C</span>
         </div>
       </div>
     );

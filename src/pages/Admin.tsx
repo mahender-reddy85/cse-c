@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { Document, RequestDoc, Submission } from '../types';
 import { Plus, Trash2, Edit2, Check, X, Inbox, FileUp, List, MessageSquare, ClipboardCheck, Upload, CheckCircle2, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { SUBJECTS, EXAMS, UNITS } from '../lib/constants';
 
 export const Admin: React.FC = () => {
   const { user } = useAuth();
@@ -186,9 +187,9 @@ export const Admin: React.FC = () => {
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Exam Period</label>
               <select value={exam} onChange={e => setExam(e.target.value as any)} className="input-field">
-                <option value="Mid-1">Mid-1</option>
-                <option value="Mid-2">Mid-2</option>
-                <option value="SEM">Semester Exam (SEM)</option>
+                {EXAMS.map(ex => (
+                  <option key={ex} value={ex}>{ex}</option>
+                ))}
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -200,7 +201,7 @@ export const Admin: React.FC = () => {
                 className="input-field"
               >
                 <option value="">Select Subject</option>
-                {['AI', 'ML', 'AFLC', 'ITE', 'WT', 'WT LAB', 'ML LAB', 'Others'].map(sub => (
+                {SUBJECTS.concat('Others').map(sub => (
                   <option key={sub} value={sub}>{sub}</option>
                 ))}
               </select>
@@ -219,8 +220,8 @@ export const Admin: React.FC = () => {
                   className="input-field text-center"
                 >
                   <option value="">Select Unit</option>
-                  {[1, 2, 3, 4, 5].map(u => (
-                    <option key={u} value={u.toString()}>{u}</option>
+                  {UNITS.map(u => (
+                    <option key={u} value={u}>{u}</option>
                   ))}
                 </select>
               </div>
