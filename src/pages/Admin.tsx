@@ -399,7 +399,8 @@ export const Admin: React.FC = () => {
                   <th className="px-6 py-4">Subject</th>
                   <th className="px-6 py-4">Unit</th>
                   <th className="px-6 py-4">Submitter</th>
-                  <th className="px-6 py-4 text-right">Status</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
@@ -411,17 +412,17 @@ export const Admin: React.FC = () => {
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.subject}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.unit}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.requestedBy.split('@')[0]}</td>
+                    <td className="px-6 py-4">
+                      {r.status === 'pending' ? (
+                        <button onClick={() => handleFulfillRequest(r.id)} className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">PENDING</button>
+                      ) : (
+                        <span className="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">FULFILLED</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end items-center gap-3">
-                        {r.status === 'pending' ? (
-                          <button onClick={() => handleFulfillRequest(r.id)} className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">PENDING</button>
-                        ) : (
-                          <span className="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">FULFILLED</span>
-                        )}
-                        <button onClick={() => setItemToDelete({ id: r.id, type: 'requests' })} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete Request">
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
+                      <button onClick={() => setItemToDelete({ id: r.id, type: 'requests' })} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete Request">
+                        <Trash2 size={14} />
+                      </button>
                     </td>
                   </tr>
                 ))}
