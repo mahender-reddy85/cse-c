@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Document } from '../types';
 import { db } from '../lib/firebase';
 import { doc, updateDoc, increment } from 'firebase/firestore';
+import { getDownloadUrl } from '../lib/utils';
 
 interface DocumentCardProps {
   doc: Document;
@@ -17,9 +18,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc: docData }) => {
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      // Force download using Cloudinary's fl_attachment flag
-      // We insert 'fl_attachment/' right after '/upload/' in the URL
-      const downloadUrl = docData.fileUrl.replace('/upload/', '/upload/fl_attachment/');
+      const downloadUrl = getDownloadUrl(docData.fileUrl);
       
       const link = document.createElement('a');
       link.href = downloadUrl;

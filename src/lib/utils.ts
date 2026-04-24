@@ -30,3 +30,11 @@ export const validateFile = (file: File): { valid: boolean; error?: string } => 
 
   return { valid: true };
 };
+
+/**
+ * Transforms a Cloudinary URL to force download by adding the fl_attachment flag.
+ */
+export const getDownloadUrl = (url: string): string => {
+  if (!url) return '';
+  return url.replace('/upload/', '/upload/fl_attachment/');
+};

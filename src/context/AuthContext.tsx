@@ -44,41 +44,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     unsubscribeProfile = onSnapshot(doc(db, 'users', authUser.uid), async (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
-        const isAdminEmail = BOOTSTRAP_ADMINS.includes(authUser.email || '');
-        const isStudentEmail = BOOTSTRAP_STUDENTS.includes(authUser.email || '');
-        
-        // Force sync role if it's a bootstrap email and doesn't match
-        const targetRole = isAdminEmail ? 'admin' : (isStudentEmail ? 'student' : data.role);
-        
-        if (targetRole !== data.role) {
-          await setDoc(doc(db, 'users', authUser.uid), { ...data, role: targetRole }, { merge: true });
-          setProfile({ uid: authUser.uid, ...data, role: targetRole } as any);
-        } else {
-          setProfile({ uid: authUser.uid, ...data } as UserProfile);
-        }
+        setProfile({ uid: authUser.uid, ...data } as UserProfile);
         setLoading(false);
       } else {
-        // If not in database, check if it's a bootstrap admin or student
+        // Auto-create profile instead of blocking
         const isAdminEmail = BOOTSTRAP_ADMINS.includes(authUser.email || '');
-        const isStudentEmail = BOOTSTRAP_STUDENTS.includes(authUser.email || '');
-
-        if (isAdminEmail || isStudentEmail) {
-          const profileData = {
-            email: authUser.email!,
-            role: isAdminEmail ? 'admin' : 'student',
-            createdAt: serverTimestamp(),
-          };
+        const profileData = {
+          email: authUser.email || (authUser.isAnonymous ? 'guest@examhub.local' : ''),
+          role: isAdminEmail ? 'admin' : 'student',
+          createdAt: serverTimestamp(),
+          isGuest: authUser.isAnonymous
+        };
+        
+        try {
           await setDoc(doc(db, 'users', authUser.uid), profileData);
           setProfile({ uid: authUser.uid, ...profileData } as any);
-          setLoading(false);
-        } else {
-          // ACCESS DENIED: Not in users collection
-          console.error("Access Denied: User not in allowlist");
-          await auth.signOut();
-          setProfile(null);
-          setLoading(false);
-          alert("Access Denied: You are not authorized to use this portal. Please contact an admin.");
+        } catch (err) {
+          console.error("Auto-create profile failed:", err);
+          setProfile({ uid: authUser.uid, ...profileData } as any);
         }
+        setLoading(false);
       }
     }, (error) => {
       console.error("Profile sync error:", error);

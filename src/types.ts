@@ -10,7 +10,7 @@ export interface UserProfile {
 export interface Document {
   id: string;
   title: string;
-  exam: 'mid-1' | 'mid-2' | 'sem';
+  exam: 'Mid-1' | 'Mid-2' | 'SEM';
   subject: string;
   unit: string;
   tags: string[];

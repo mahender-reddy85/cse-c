@@ -56,11 +56,11 @@ export const Admin: React.FC = () => {
 
     setLoading(true);
     try {
-      const examType = exam.toLowerCase().includes('mid') ? 'mid' : 'sem';
+      const sExam = sanitizePath(exam);
       const sSub = sanitizePath(subject);
       const sUnit = `unit-${sanitizeUnit(unit)}`;
       
-      const folderPath = `cse-c/${examType}/${sSub}/${sUnit}`;
+      const folderPath = `cse-c/${sExam}/${sSub}/${sUnit}`;
       
       const fileUrl = await uploadToCloudinary(file, folderPath);
       

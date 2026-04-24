@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { Document } from '../types';
 import { DocumentCard } from '../components/DocumentCard';
 import { Layers, Book, Hash, Search as SearchIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { FilterGroup } from '../components/FilterGroup';
 
 import { SUBJECTS, EXAMS, UNITS } from '../lib/constants';
 
@@ -21,28 +22,26 @@ export const Dashboard: React.FC = () => {
   const [filteredDocs, setFilteredDocs] = useState<Document[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchDocs = async () => {
+  useEffect(() => {
     if (authLoading || !profile) return;
+    
     setLoading(true);
-    try {
-      let q = query(collection(db, 'documents'));
-      if (exam) q = query(q, where('exam', '==', exam));
-      if (subject) q = query(q, where('subject', '==', subject));
-      if (unit) q = query(q, where('unit', '==', unit));
+    let q = query(collection(db, 'documents'), orderBy('createdAt', 'desc'));
+    if (exam) q = query(q, where('exam', '==', exam));
+    if (subject) q = query(q, where('subject', '==', subject));
+    if (unit) q = query(q, where('unit', '==', unit));
 
-      const snap = await getDocs(q);
+    const unsubscribe = onSnapshot(q, (snap) => {
       const fetchedDocs = snap.docs.map(d => ({ id: d.id, ...d.data() } as Document));
       setDocs(fetchedDocs);
       setFilteredDocs(fetchedDocs);
-    } catch (error) {
-      console.error("Error fetching explorer docs:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    }, (error) => {
+      console.error("Error fetching explorer docs:", error);
+      setLoading(false);
+    });
 
-  useEffect(() => {
-    fetchDocs();
+    return () => unsubscribe();
   }, [exam, subject, unit, authLoading, profile]);
 
   // Local filtering based on searchTerm
@@ -60,28 +59,6 @@ export const Dashboard: React.FC = () => {
     setFilteredDocs(filtered);
   }, [searchTerm, docs]);
 
-  const ButtonGroup = ({ label, icon: Icon, value, options, onChange }: any) => (
-    <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
-      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-        <Icon size={12} />
-        <span>{label}</span>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {options.map((opt: string) => (
-          <button
-            key={opt}
-            onClick={() => onChange(value === opt ? '' : opt)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${value === opt
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50'
-              }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
 
   if (loading && docs.length === 0) {
     return (
@@ -116,9 +93,9 @@ export const Dashboard: React.FC = () => {
           <div className="h-px bg-slate-100 dark:bg-slate-800 mt-4 -mx-4 md:-mx-6" />
         </div>
 
-        <ButtonGroup label="Exam" icon={Layers} value={exam} options={EXAMS} onChange={setExam} />
-        <ButtonGroup label="Subject" icon={Book} value={subject} options={SUBJECTS} onChange={setSubject} />
-        <ButtonGroup label="Unit" icon={Hash} value={unit} options={UNITS} onChange={setUnit} />
+        <FilterGroup label="Exam" icon={Layers} value={exam} options={EXAMS} onChange={setExam} />
+        <FilterGroup label="Subject" icon={Book} value={subject} options={SUBJECTS} onChange={setSubject} />
+        <FilterGroup label="Unit" icon={Hash} value={unit} options={UNITS} onChange={setUnit} />
       </div>
 
       {/* 2. Resources Grid */}

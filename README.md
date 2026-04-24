@@ -2,8 +2,6 @@
 
 <div align="center">
   <img src="./public/cse-c.png" width="120" height="120" alt="CSE-C Logo" />
-  <h3>Your Gateway to Academic Excellence</h3>
-  <p>A mobile-first, professional resource repository for CSE-C students.</p>
 </div>
 
 ---
@@ -74,4 +72,4 @@
 
 ---
 
-<p align="center">Made for <strong>CSE-C</strong> Students</p>
+<p align="center">Made by <strong>CSE-C</strong> Students</p>

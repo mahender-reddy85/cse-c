@@ -4,12 +4,19 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Document } from '../types';
 import { DocumentCard } from '../components/DocumentCard';
-import { Search as SearchIcon } from 'lucide-react';
+import { Search as SearchIcon, Layers, Book, Hash } from 'lucide-react';
+import { SUBJECTS, EXAMS, UNITS } from '../lib/constants';
+import { FilterGroup } from '../components/FilterGroup';
 
 export const Search: React.FC = () => {
   const location = useLocation();
   const [allDocs, setAllDocs] = useState<Document[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const [exam, setExam] = useState<string>('');
+  const [subject, setSubject] = useState<string>('');
+  const [unit, setUnit] = useState<string>('');
+  
   const [filteredDocs, setFilteredDocs] = useState<Document[]>([]);
 
   // Sync with URL query param from header search
@@ -28,30 +35,41 @@ export const Search: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredDocs([]);
-      return;
+    let filtered = allDocs;
+
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(doc => 
+        doc.title.toLowerCase().includes(term) || 
+        doc.subject.toLowerCase().includes(term) ||
+        doc.tags.some(tag => tag.toLowerCase().includes(term))
+      );
     }
 
-    const term = searchTerm.toLowerCase();
-    const filtered = allDocs.filter(doc => 
-      doc.title.toLowerCase().includes(term) || 
-      doc.subject.toLowerCase().includes(term) ||
-      doc.tags.some(tag => tag.toLowerCase().includes(term))
-    );
+    if (exam) filtered = filtered.filter(doc => doc.exam === exam);
+    if (subject) filtered = filtered.filter(doc => doc.subject === subject);
+    if (unit) filtered = filtered.filter(doc => doc.unit === unit);
+
     setFilteredDocs(filtered);
-  }, [searchTerm, allDocs]);
+  }, [searchTerm, allDocs, exam, subject, unit]);
 
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-800">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
           Search Results
         </h1>
         <p className="text-xs text-slate-500 font-medium italic">
           Showing results for "{searchTerm || '...'}"
         </p>
       </header>
+
+      {/* Filters Overlay */}
+      <div className="card p-4 md:p-6 bg-white dark:bg-slate-900 flex flex-col md:flex-row flex-wrap gap-4 md:gap-8 items-start border border-slate-200 dark:border-slate-800">
+        <FilterGroup label="Exam" icon={Layers} value={exam} options={EXAMS} onChange={setExam} />
+        <FilterGroup label="Subject" icon={Book} value={subject} options={SUBJECTS} onChange={setSubject} />
+        <FilterGroup label="Unit" icon={Hash} value={unit} options={UNITS} onChange={setUnit} />
+      </div>
 
       <div>
         {searchTerm ? (
