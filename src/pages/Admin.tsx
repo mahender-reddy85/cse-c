@@ -23,7 +23,7 @@ export const Admin: React.FC = () => {
   const [unit, setUnit] = useState('');
   const [tags, setTags] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [docToDelete, setDocToDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string, type: 'documents' | 'requests' | 'submissions' } | null>(null);
 
   // Lists
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -114,15 +114,15 @@ export const Admin: React.FC = () => {
     await updateDoc(doc(db, 'requests', id), { status: 'fulfilled' });
   };
 
-  const handleDeleteDoc = (id: string) => {
-    setDocToDelete(id);
-  };
-
   const confirmDelete = async () => {
-    if (docToDelete) {
-      await deleteDoc(doc(db, 'documents', docToDelete));
-      setDocToDelete(null);
-      setStatus({ type: 'success', text: 'DOCUMENT_DELETED_SUCCESSFULLY' });
+    if (itemToDelete) {
+      try {
+        await deleteDoc(doc(db, itemToDelete.type, itemToDelete.id));
+        setItemToDelete(null);
+        setStatus({ type: 'success', text: `${itemToDelete.type.toUpperCase().slice(0, -1)}_DELETED_SUCCESSFULLY` });
+      } catch (err) {
+        setStatus({ type: 'error', text: 'DELETION_FAILED' });
+      }
     }
   };
 
@@ -374,9 +374,11 @@ export const Admin: React.FC = () => {
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.subject}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{d.unit}</td>
                     <td className="px-6 py-4 text-right">
-                      <button onClick={() => handleDeleteDoc(d.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete">
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => setItemToDelete({ id: d.id, type: 'documents' })} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -410,11 +412,16 @@ export const Admin: React.FC = () => {
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.unit}</td>
                     <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{r.requestedBy.split('@')[0]}</td>
                     <td className="px-6 py-4 text-right">
-                      {r.status === 'pending' ? (
-                        <button onClick={() => handleFulfillRequest(r.id)} className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">PENDING</button>
-                      ) : (
-                        <span className="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">FULFILLED</span>
-                      )}
+                      <div className="flex justify-end items-center gap-3">
+                        {r.status === 'pending' ? (
+                          <button onClick={() => handleFulfillRequest(r.id)} className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">PENDING</button>
+                        ) : (
+                          <span className="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">FULFILLED</span>
+                        )}
+                        <button onClick={() => setItemToDelete({ id: r.id, type: 'requests' })} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete Request">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -426,37 +433,65 @@ export const Admin: React.FC = () => {
       )}
 
       {activeTab === 'submissions' && (
-        <div className="card divide-y divide-slate-100">
-          {submissions.map(s => (
-            <div key={s.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 gap-4 hover:bg-slate-50 transition-colors">
-              <div className="flex-1 overflow-hidden">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <p className="text-sm font-bold text-slate-800 truncate">{s.title}</p>
-                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${s.status === 'approved' ? 'bg-green-50 text-green-600' : s.status === 'rejected' ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-600'}`}>
-                    {s.status}
-                  </span>
-                </div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">{s.subject} • Unit {s.unit} • Contributor: {s.submittedBy}</p>
-                <a href={s.fileUrl} target="_blank" className="text-[10px] font-bold text-blue-600 hover:underline mt-1 inline-block">PREVIEW_ASSET</a>
-              </div>
-              {s.status === 'pending' && (
-                <div className="flex gap-2 self-end md:self-auto">
-                  <button onClick={() => handleApproveSubmission(s)} className="flex items-center gap-2 px-3 py-2 border border-green-200 text-green-600 hover:bg-green-50 rounded-lg transition-all text-xs font-bold" title="Approve">
-                    <Check size={16} /> <span>APPROVE</span>
-                  </button>
-                  <button onClick={() => updateDoc(doc(db, 'submissions', s.id), { status: 'rejected' })} className="flex items-center gap-2 px-3 py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg transition-all text-xs font-bold" title="Reject">
-                    <X size={16} /> <span>REJECT</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+        <div className="card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[700px]">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="px-6 py-4">Submitted Resource</th>
+                  <th className="px-6 py-4">Subject/Unit</th>
+                  <th className="px-6 py-4">Contributor</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                {submissions.map(s => (
+                  <tr key={s.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{s.title}</p>
+                        <a href={s.fileUrl} target="_blank" className="text-[10px] font-bold text-blue-600 hover:underline">PREVIEW_ASSET</a>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">{s.subject}</p>
+                      <p className="text-[10px] text-slate-400">Unit {s.unit}</p>
+                    </td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{s.submittedBy.split('@')[0]}</td>
+                    <td className="px-6 py-4">
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${s.status === 'approved' ? 'bg-green-50 text-green-600' : s.status === 'rejected' ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-600'}`}>
+                        {s.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end items-center gap-2">
+                        {s.status === 'pending' && (
+                          <>
+                            <button onClick={() => handleApproveSubmission(s)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all" title="Approve">
+                              <Check size={16} />
+                            </button>
+                            <button onClick={() => updateDoc(doc(db, 'submissions', s.id), { status: 'rejected' })} className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Reject">
+                              <X size={16} />
+                            </button>
+                          </>
+                        )}
+                        <button onClick={() => setItemToDelete({ id: s.id, type: 'submissions' })} className="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Delete Permanent">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {submissions.length === 0 && <div className="p-12 text-center text-slate-400 italic text-sm">No pending user contributions</div>}
         </div>
       )}
       {/* Deletion Confirmation Modal */}
       <AnimatePresence>
-        {docToDelete && (
+        {itemToDelete && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -474,7 +509,7 @@ export const Admin: React.FC = () => {
               </p>
               <div className="flex gap-2">
                 <button 
-                  onClick={() => setDocToDelete(null)}
+                  onClick={() => setItemToDelete(null)}
                   className="flex-1 py-2 px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-colors"
                 >
                   NO
