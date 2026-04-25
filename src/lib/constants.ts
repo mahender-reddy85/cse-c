@@ -1,6 +1,7 @@
 export const BOOTSTRAP_ADMINS = [
   'likkimahenderreddy123@gmail.com',
-  'ndgmahi6@gmail.com'
+  'ndgmahi6@gmail.com',
+   'pulasumanth5991@gmail.com'
 ];
 
 export const BOOTSTRAP_STUDENTS = [
